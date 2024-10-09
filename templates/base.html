@@ -10,9 +10,17 @@
     <body>
         <header>
             <div id="navbar">
-                <div id="logo">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Dojo logo">
+                <a href="{{ url_for('home') }}">
+                <div id="logo-title-container">
+                    <div id="logo">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Dojo logo">
+                    </div>
+                    
+                    <div id=title>
+                        <h1>The Dojo Project</h1>
+                    </div>
                 </div>
+                </a>
 
                 <div id="nav-links">
                     <a href="{{ url_for('home') }}" {% if active=="home" %}class="active"{% endif %}>Home</a>
@@ -28,8 +36,6 @@
                 </div>
             </div>
         </header>
-        
-        <a href="{{ url_for('home') }}"><div id="banner-container"><h1>The Dojo Project</h1></div></a>
 
         {% block content %}{% endblock %}
 

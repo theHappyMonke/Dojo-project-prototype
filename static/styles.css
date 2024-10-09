@@ -1,26 +1,35 @@
 /* Main */
-@font-face {
-    font-family: 'base-font';
-    src: url('base-font.ttf');
-}
 
+/*
+    This section sets the margin, padding, and box-sizing for the entire page.
+*/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/*
+    This section sets the font family and background color for the entire page.
+*/
 body {
-    font-family: 'base-font';
+    font-family: Verdana (sans-serif);
     background-color: #ffffff;
+    min-height: 2000px;
 }
 
+/*
+    This makes it so that any a tags are not underlined.
+*/
 a {
     text-decoration: none;
 }
 /* End of Main */
 
 /* Navbar */
+/*
+    This section identifies the container for the navbar.
+*/
 #navbar {
     display: flex;
     height: 99px;
@@ -31,6 +40,23 @@ a {
     justify-content: space-between;
 }
 
+/*
+    This section is for the logo and title.
+*/
+#logo-title-container {
+    display: flex;
+    margin-left: 20px;
+    align-items: center;
+    gap: 20px;
+}
+
+#title {
+    padding: 8px;
+    background-color: #001427;
+    color: #dfe0e2;
+    font-size: 8px;
+}
+
 #logo {
     display: flex;
     align-items: center;
@@ -39,12 +65,15 @@ a {
 #logo > img {
     width: 40px; /* Set the size of the logo */
     height: auto;
-    margin-left: 80%;
+    margin-left: 20%;
 }
 
+/*
+    This section is for the navigation links.
+*/
 #nav-links {
     display: flex;
-    margin-left: 64%;
+    margin-left: 55%;
     gap: 8px;
 }
 
@@ -67,6 +96,9 @@ a {
     background-color: #dfe0e2;
 }
 
+/*
+  This section is for the sign in and sign up buttons.
+*/
 #auth-buttons {
     display: flex;
     margin-left: auto;
@@ -74,7 +106,6 @@ a {
 }
 
 #auth-buttons > a {
-    font-family: 'base-font';
     margin: 6px;
     padding: 8px 16px;
     border: 3px solid;
@@ -91,9 +122,23 @@ a {
 /* End of Navbar */
 
 /* Classes */
+.content-container {
+    padding: 2em;
+    max-width: 80%;
+    margin: 2em auto;
+    background-color: #fff;
+    gap: 48px;
+    box-shadow: 0 0 20px #00001a9b;
+    border-radius: 20px;
+}
 /* End of Classes */
 
 /* Ids */
+
+/*
+    This section is for the banner container.
+    It effects what colour everything is and the size of the text.
+*/
 #banner-container {
     display: flex;
     justify-content: center;
@@ -103,5 +148,9 @@ a {
     font-size: 80px;
     background-color: #001427;
     color: #dfe0e2;
+}
+
+#navbar-break {
+    height: 102px;
 }
 /* End of Ids */
