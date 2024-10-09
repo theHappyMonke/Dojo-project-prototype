@@ -23,11 +23,13 @@
                 </div>
 
                 <div id="auth-buttons">
-                    <button href="{{ url_for('signin') }}">sign in</button>
-                    <button href="{{ url_for('signup') }}">sign up</button>
+                    <a href="{{ url_for('signin') }}">Sign in</a>
+                    <a href="{{ url_for('signup') }}">Sign up</a>
                 </div>
             </div>
         </header>
+        
+        <a href="{{ url_for('home') }}"><div id="banner-container"><h1>The Dojo Project</h1></div></a>
 
         {% block content %}{% endblock %}
 
