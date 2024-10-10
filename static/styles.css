@@ -122,14 +122,36 @@ a {
 /* End of Navbar */
 
 /* Classes */
-.content-container {
+.content {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2em;
+}
+
+.quote-grid {
+    display: grid;
     padding: 2em;
     max-width: 80%;
+    height: auto;
     margin: 2em auto;
-    background-color: #fff;
-    gap: 48px;
-    box-shadow: 0 0 20px #00001a9b;
-    border-radius: 20px;
+    gap: 10;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.quote {
+    text-align: center;
+    margin: 1em;
+    font-size: 40px;
+    width: 400px;
+    color: #001427;
+    border: 2px solid;
+    padding: 1em;
+    border-color: #dfe0e2;
+    border-radius: 8px;
+}
+
+.quote > h4 {
+    text-align: right;
 }
 /* End of Classes */
 
