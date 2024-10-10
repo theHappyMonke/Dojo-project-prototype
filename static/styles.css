@@ -19,6 +19,14 @@ body {
 }
 
 /*
+    This section sets the font size and color for the entire page.
+*/
+footer {
+    border-top: 2px solid;
+    border-color: #d9d9d9;
+}
+
+/*
     This makes it so that any a tags are not underlined.
 */
 a {
@@ -123,12 +131,46 @@ a {
 
 /* Classes */
 .content {
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
+    margin-left: 10%;
     padding: 2em;
 }
 
-.quote-grid {
+.content > hr {
+    background-color: #dfe0e2;
+    height: 3px;
+    width: 150%;
+    border: none;
+}
+
+.two-column-grid {
+    display: grid;
+    padding: 2em;
+    max-width: 80%;
+    height: auto;
+    margin: 2em auto;
+    gap: 20;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.two-column-content {
+    text-align: center;
+    margin: 1em;
+    font-size: 40px;
+    width: 600px;
+    color: #001427;
+    border: 2px solid #dfe0e2;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.two-column-content > img {
+    width: 100%;
+    height: auto;
+}
+
+.three-column-grid {
     display: grid;
     padding: 2em;
     max-width: 80%;
@@ -138,20 +180,50 @@ a {
     grid-template-columns: repeat(3, 1fr);
 }
 
-.quote {
+.three-column-content {
     text-align: center;
     margin: 1em;
     font-size: 40px;
     width: 400px;
     color: #001427;
-    border: 2px solid;
-    padding: 1em;
-    border-color: #dfe0e2;
+    border: 2px solid #dfe0e2;
+    padding: 10px;
     border-radius: 8px;
 }
 
-.quote > h4 {
+.three-column-content > h4 {
     text-align: right;
+}
+
+/*
+    This below is for accessability and will show the description of the image when hovered over.
+*/
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+  
+.image-container img {
+    display: block;
+    width: 250px;
+    height: 250px;
+}
+  
+.description {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #000000b3; /* Semi-transparent background */
+    color: white;
+    padding: 5px;
+    font-size: 12px;
+    width: 250px;
+    text-align: center;
+}
+  
+.image-container:hover .description {
+    display: block;
 }
 /* End of Classes */
 
