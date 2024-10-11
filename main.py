@@ -4,8 +4,12 @@ import sqlite3
 connection = sqlite3.connect('dojobase.db', check_same_thread=False)
 
 cursor = connection.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY, cardholder TEXT, PAN TEXT, expiryDate TEXT, serviceCode TEXT)")
-cursor.execute("CREATE TABLE IF NOT EXISTS dojos (id INTEGER PRIMARY KEY, Fname TEXT, Sname TEXT, email TEXT, password TEXT, cardID INTEGER, FOREIGN KEY(cardID) REFERENCES cards(id))")
+cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY, card_holder TEXT, PAN TEXT, expiry_date TEXT, service_code TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, forname TEXT, surname TEXT, email TEXT, password TEXT, card_id INTEGER, FOREIGN KEY(cardID) REFERENCES cards(id))")
+cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY, forname TEXT, surname TEXT, email TEXT, password TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS organisers (id INTEGER PRIMARY KEY, forname TEXT, surname TEXT, email TEXT, password TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY, name TEXT, session_price INTEGER, session_date TEXT, activity_1 TEXT, activity_2 TEXT, activity_3 TEXT, timeslot_1 TEXT, timeslot_2 TEXT, timeslot_3 TEXT, lead_id INTEGER, organiser_id INTEGER, FOREIGN KEY(lead_id) REFERENCES leads(id), FOREIGN KEY(organiser_id) REFERENCES organisers(id))")
+cursor.execute("CREATE TABLE IF NOT EXISTS bookings (id INTEGER PRIMARY KEY, user_id INTEGER, session_id INTEGER, order_total INTEGER, FOREIGN KEY(user_id) REFERENCES users(id), FOREIGN KEY(session_id) REFERENCES sessions(id))")
 cursor.close()
 #REFERENCES cards(id))
 
