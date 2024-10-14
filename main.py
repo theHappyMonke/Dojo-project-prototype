@@ -103,11 +103,11 @@ def signup():
             cursor = connection.cursor()
             cursor.execute(f"INSERT INTO user VALUES (NULL, '{forname}', '{surname}', '{email}', '{password}')")
             connection.commit()
+            flash('Signup successful')
         except sqlite3.Error as error:
             flash('Database error', error)
-            return render_template('login.html')
         finally:
-            flash('Signup successful')
+            cursor.close()
             return render_template('login.html')
     else:
         return render_template('sign-up.html')
