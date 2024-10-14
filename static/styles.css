@@ -81,7 +81,6 @@ a {
 */
 #nav-links {
     display: flex;
-    margin-left: 55%;
     gap: 8px;
 }
 
@@ -208,7 +207,11 @@ a {
     width: 250px;
     height: 250px;
 }
-  
+
+/*
+    The description is hidden by default. It appears when you hover over the image container (parent).
+    It is here for accessability.
+*/
 .description {
     display: none;
     position: absolute;

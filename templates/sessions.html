@@ -6,48 +6,23 @@
 
 {% block content %}
     <div class="content">
-        <h1>Our session leads</h1>
-        <h3>A little bit about them</h3>
+        <h1>Upcoming sessions</h1>
+        <h3>Organised by date</h3>
         <hr>
     </div>
-    <h2>Sessions for 2024</h2>
     <div class="two-column-grid">
+        {% for session in sessions %}
         <div class="two-column-content">
             <div class="image-container">
                 <img src="/static/logo.png" alt="Employee name">
                 <div class="description">This is a short description of the image.</div>
             </div>
-            <h3>Sessoin name</h3>
-            <h5>Time and date: --/--/----</h5>
-            <h5>Session content:</h5>
-            <p>Some information about the employee</p>
+            <h3>Session name</h3>
+            <h5>Date: {{session[1]}}</h5>
+            <h5>Lead: {{session[2]}}</h5>
+            <h5>Location: {{session[3]}}</h5>
+            <h5>Session content: {{session[4]}}, {{session[5]}}, {{session[6]}}</h5>
         </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}
