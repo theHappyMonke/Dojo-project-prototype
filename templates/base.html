@@ -26,7 +26,7 @@
                     <a href="{{ url_for('home') }}" {% if active=="home" %}class="active"{% endif %}>Home</a>
                     <a href="{{ url_for('about') }}" {% if active=="about" %}class="active"{% endif %}>About</a>
                     <a href="{{ url_for('sessions') }}" {% if active=="sessions" %}class="active"{% endif %}>Sessions</a>
-                    {% if organiser=="True" %}<a href="{{ url_for('setup') }}" {% if active=="setup" %}class="active"{% endif %}>Set-up</a>{% endif %}
+                    <a href="{{ url_for('setup') }}" {% if active=="setup" %}class="active"{% endif %}>Set-up</a>
                     <a href="{{ url_for('booking') }}" {% if active=="booking" %}class="active"{% endif %}>Booking</a>
                     <a href="{{ url_for('contact') }}" {% if active=="contact" %}class="active"{% endif %}>Contact</a>
                 </div>

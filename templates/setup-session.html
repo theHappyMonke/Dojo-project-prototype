@@ -5,6 +5,33 @@
 {% block title %}Set-up{% endblock %}
 
 {% block content %}
-    <h1>Set-up</h1>
-    <p>Welcome to the set-up page.</p>
+    <div class="content">
+        <form action="{{ url_for('setup')}}" method="post" id="setup-session" autocomplete = "off">
+            <label for="name">Session name:</label><br>
+            <input type="text" id="name" name="name" placeholder="Enter the session name" required><br><br>
+            <label for="date">Date:</label><br>
+            <input type="date" id="date" name="date" required><br><br>
+            <label for="lead">Select lead:</label><br>
+            <select name="lead">
+            {% for lead in leads %}
+                <option value="{{ leads[0] }}">{{ leads[1] }}</option>
+            {% endfor %}
+            </select><br><br>
+            <label for="location">Location:</label><br>
+            <input type="text" id="location" name="location" placeholder="Enter the location" required><br><br>
+            <label for="activity_1">Activity 1:</label><br>
+            <input type="text" id="activity_1" name="activity_1" placeholder="Enter an activity" required><br><br>
+            <label for="activity_2">Activity 1:</label><br>
+            <input type="text" id="activity_2" name="activity_2" placeholder="Enter an activity" required><br><br>
+            <label for="activity_2">Activity 1:</label><br>
+            <input type="text" id="activity_3" name="activity_3" placeholder="Enter an activity" required><br><br>
+            <label for="timeslot_1">Time slot 1:</label><br>
+            <input type="time" id="timeslot_1" name="timeslot_1" required><br><br>
+            <label for="timeslot_2">Time slot 2:</label><br>
+            <input type="time" id="timeslot_2" name="timeslot_2" required><br><br>
+            <label for="timeslot_3">Time slot 3:</label><br>
+            <input type="time" id="timeslot_3" name="timeslot_3" required><br><br>
+            <input type="submit" value="Set-up session">
+        </form>
+    </div>
 {% endblock %}

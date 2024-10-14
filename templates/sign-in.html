@@ -5,6 +5,25 @@
 {% block title %}Sign in{% endblock %}
 
 {% block content %}
-    <h1>Sign in</h1>
-    <p>Welcome to the sign in page.</p>
+    <div class="content">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Sign in</h1>
+        <p>Welcome to the sign in page.</p>
+        <br>
+        <hr>
+        <br>
+        <form action="{{ url_for('signin')}}" method="post" id="signin" autocomplete = "off">
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" placeholder="AdaLovelace@email.com" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" placeholder="Password" required><br>
+            <input type="submit" value="Sign in">
+        </form>
+    </div>
 {% endblock %}

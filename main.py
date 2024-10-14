@@ -1,7 +1,9 @@
 # Description: This is the main file for our Flask application. This file will contain all of our routes and logic for our application.
 
 # Import the Flask module from the flask package
-from flask import Flask, render_template, flash, url_for, request
+from flask import Flask, render_template, request, redirect, url_for, flash #Flask library and functions
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash #This library lets us easily hash + verify passwords
 import sqlite3
 
 #Create a connection to our database
@@ -23,7 +25,7 @@ app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
 def getSessions(): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT session.id, session.date, lead.forname, session.location, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
+        cursor.execute("SELECT session.id, session.name, session.date, lead.forname, session.location, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -32,6 +34,19 @@ def getSessions(): #Query our table to retrieve all of our products
         
     print(sessions)
     return sessions
+
+def getLeads(): #Query our table to retrieve all of our leads
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT lead.id, lead.forname FROM lead")
+        leads = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
+    
+    print(leads)
+    return leads
 
 #Create a route decorator to tell Flask what URL should trigger our function
 @app.route('/')
@@ -48,9 +63,34 @@ def sessions():
     sessions = getSessions()
     return render_template('sessions.html', sessions = sessions)
 
-@app.route('/sessions/setup')
+@app.route('/sessions/setup', methods=['GET', 'POST'])
 def setup():
-    return render_template('setup-session.html')
+    if request.method == 'POST':
+        name = request.form['name']
+        price = request.form['price']
+        date = request.form['date']
+        location = request.form['location']
+        activity_1 = request.form['activity_1']
+        activity_2 = request.form['activity_2']
+        activity_3 = request.form['activity_3']
+        timeslot_1 = request.form['timeslot_1']
+        timeslot_2 = request.form['timeslot_2']
+        timeslot_3 = request.form['timeslot_3']
+        lead_id = request.form['lead_id']
+        organiser_id = request.form['organiser_id']
+
+        try:
+            cursor = connection.cursor()
+            cursor.execute(f"INSERT INTO session VALUES (NULL, {name}, {price}, {date}, {location}, {activity_1}, {activity_2}, {activity_3}, {timeslot_1}, {timeslot_2}, {timeslot_3}, {lead_id}, {organiser_id})")
+            connection.commit()
+        except sqlite3.Error as error:
+            print("Database error:", error)
+            flash('Database error')
+            leads = getLeads()
+            return render_template('setup-session.html', leads = leads)
+    else:
+        leads = getLeads()
+        return render_template('setup-session.html', leads = leads)
 
 @app.route('/booking')
 def booking():
@@ -66,7 +106,7 @@ def contact():
 
 @app.route('/sign-in', methods=['GET', 'POST'])
 def signin():
-    if request.method == 'post':
+    if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
 
@@ -75,7 +115,7 @@ def signin():
         # All errors are handled using the try and except block which prevents the program from crashing.
         try:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT user.email, user.password FROM user WHERE email='{email}'")
+            cursor.execute(f"SELECT user.email, user.password FROM user WHERE email={email}")
             check = cursor.fetchone()
             cursor.close()
         except sqlite3.Error as error:
@@ -90,7 +130,7 @@ def signin():
 
 @app.route('/sign-up', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'post':
+    if request.method == 'POST':
         forname = request.form['forname']
         surname = request.form['surname']
         email = request.form['email']
@@ -101,14 +141,33 @@ def signup():
         # All errors are handled using the try and except block which prevents the program from crashing.
         try:
             cursor = connection.cursor()
-            cursor.execute(f"INSERT INTO user VALUES (NULL, '{forname}', '{surname}', '{email}', '{password}')")
-            connection.commit()
-            flash('Signup successful')
+            cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
+            user = cursor.fetchone()
         except sqlite3.Error as error:
-            flash('Database error', error)
-        finally:
+            print("Database error:", error)
+            flash('Database error')
+        finally: 
             cursor.close()
-            return render_template('login.html')
+
+        if user: #Checks if there is already a user with this email address.
+            flash('Email already registered')
+            return redirect(url_for('sign-up')) #You should provide some feedback to the user rather than just redirect to the same page like this.
+        else:
+            try:
+                query = "INSERT INTO users VALUES (NULL, ?, ?, ?)" # Use NULL for the ID value, SQLite will generate it for you.
+                insert_data = (forname, surname, email, generate_password_hash(password)) #Create a tuple with all the data we want to INSERT.
+                cursor = connection.cursor()
+                cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
+                connection.commit() #This is necessary to permanently make the change to our DB, the change will not persist without it.
+            except sqlite3.Error as error:
+                print("Database error:", error)
+                flash('Database error')
+                return render_template('sign-up.html')
+            finally: 
+                cursor.close()
+     
+            flash('Registration successful')
+            return redirect(url_for('sign-in')) #Successful signup - return to login page
     else:
         return render_template('sign-up.html')
 

@@ -32,6 +32,30 @@ footer {
 a {
     text-decoration: none;
 }
+
+form {
+    color: #001427;
+}
+
+form > input {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #dfe0e2;
+    background-color: #fff;
+}
+
+form > input[type="submit"]:hover {
+    background-color: #eeeff0;
+}
+
+form > option {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #dfe0e2;
+    background-color: #fff;
+}
 /* End of Main */
 
 /* Navbar */
@@ -81,6 +105,7 @@ a {
 */
 #nav-links {
     display: flex;
+    margin-left: auto;
     gap: 8px;
 }
 
@@ -139,7 +164,6 @@ a {
 .content > hr {
     background-color: #dfe0e2;
     height: 3px;
-    width: 150%;
     border: none;
 }
 
@@ -193,7 +217,6 @@ a {
 .three-column-content > h4 {
     text-align: right;
 }
-
 /*
     This below is for accessability and will show the description of the image when hovered over.
 */
