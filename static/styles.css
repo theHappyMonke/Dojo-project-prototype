@@ -168,6 +168,27 @@ form > option {
     border: none;
 }
 
+.one-column-grid {
+    display: grid;
+    padding: 2em;
+    max-width: 80%;
+    height: auto;
+    margin: 2em auto;
+    gap: 20;
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.one-column-content {
+    text-align: center;
+    margin: 1em;
+    font-size: 40px;
+    width: 1400px;
+    color: #001427;
+    border: 2px solid #dfe0e2;
+    padding: 10px;
+    border-radius: 8px;
+}
+
 .two-column-grid {
     display: grid;
     padding: 2em;
@@ -189,9 +210,17 @@ form > option {
     border-radius: 8px;
 }
 
-.two-column-content > img {
+.two-column-content img {
     width: 100%;
     height: auto;
+}
+
+.two-column-content a {
+    color: #b70900;
+}
+
+.two-column-content a:active {
+    color: #ca0000;
 }
 
 .three-column-grid {

@@ -13,30 +13,11 @@
     </div>
     
     <div class="three-column-grid">
+        {% for author in authors %}
         <div class="three-column-content">
-            <h3>"Quote"</h3>
-            <h4>-author</h4>
+            <h3>"{{author[1]}}"</h3>
+            <h4>-{{author[2]}}</h4>
         </div>
-        <div class="three-column-content">
-            <h3>"Quote"</h3>
-            <h4>-author</h4>
-        </div>
-        
-        <div class="three-column-content">
-            <h3>"Quote"</h3>
-            <h4>-author</h4>
-        </div>
-        <div class="three-column-content">
-            <h3>"Quote"</h3>
-            <h4>-author</h4>
-        </div>
-        <div class="three-column-content">
-            <h3>"Quote"</h3>
-            <h4>-author</h4>
-        </div>
-        <div class="three-column-content">
-            <h3>"Quote"</h3>
-            <h4>-author</h4>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}

@@ -10,12 +10,16 @@ import sqlite3
 connection = sqlite3.connect('dojobase.db', check_same_thread=False)
 
 cursor = connection.cursor() #Cursor is a control structure used to traverse and fetch records from the database. Cursor has the ability to store multiple rows returned from a query.
+cursor.execute("CREATE TABLE IF NOT EXISTS quote (id INTEGER PRIMARY KEY NOT NULL, quote TEXT NOT NULL, author TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS card (id INTEGER PRIMARY KEY NOT NULL, card_holder TEXT NOT NULL, PAN TEXT NOT NULL, expiry_date TEXT NOT NULL, service_code TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, card_id INTEGER NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS lead (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS organiser (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS lead (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, quote TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS organiser (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, quote TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, activity_1 TEXT NOT NULL, activity_2 TEXT NOT NULL, activity_3 TEXT NOT NULL, timeslot_1 TEXT NOT NULL, timeslot_2 TEXT NOT NULL, timeslot_3 TEXT NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS activity (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, activity TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
 cursor.close()
 
 #Create an instance of the Flask class
@@ -23,10 +27,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'this_is_a_very_secret_key' # This is used for flash to work
 
 def getSessions(): #Query our table to retrieve all of our products
-    data = "session.id, session.name, session.description, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price"
+    data = "session.id, session.name, session.description, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
+        cursor.execute(f"SELECT {data} FROM session JOIN lead ON session.lead_id = lead.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -35,10 +39,59 @@ def getSessions(): #Query our table to retrieve all of our products
         
     return sessions
 
+def getSessionsForBookings(): #Query our table to retrieve all of our products
+    data = "session.id, session.name, session.description, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.price"
+    try:
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT {data} FROM session JOIN lead ON session.lead_id = lead.id")
+        sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally: #finally will always run after both a try and except. In other words: no matter if successful or not, this code will run.
+        cursor.close()
+        
+    return sessions
+
+def getActivities(session_id): #Query our table to retrieve all of our products
+    try:
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT id, activity FROM activity WHERE session_id = {session_id[0]}")
+        activities = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
+    
+    return activities
+
+def getTimeslots(session_id): #Query our table to retrieve all of our products
+    try:
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT id, timeslot_start, timeslot_end FROM timeslot WHERE session_id = {session_id[0]}")
+        activities = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
+    
+    return activities
+
+def getAuthors(): #Query our table to retrieve all of our authors
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT id, quote, author FROM quote")
+        authors = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
+    
+    return authors
+
 def getLeads(): #Query our table to retrieve all of our leads
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, forname, surname FROM lead")
+        cursor.execute("SELECT id, photo, forname, surname, quote FROM lead")
         leads = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -47,15 +100,30 @@ def getLeads(): #Query our table to retrieve all of our leads
     
     return leads
 
+def getOrganisers(): #Query our table to retrieve all of our organisers
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT id, photo, forname, surname, quote FROM organiser")
+        organisers = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
+    
+    return organisers
+
 #Create a route decorator to tell Flask what URL should trigger our function
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    authors = getAuthors()
+    return render_template('home.html', authors = authors)
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    leads = getLeads()
+    organisers = getOrganisers()
+    return render_template('about.html', leads = leads, organisers = organisers)
 
 @app.route('/sessions')
 def sessions():
@@ -80,7 +148,7 @@ def setup():
         timeslot_1 = request.form['timeslot_1-1'] + " - " + request.form['timeslot_1-2']
         timeslot_2 = request.form['timeslot_2-1'] + " - " + request.form['timeslot_2-2']
         timeslot_3 = request.form['timeslot_3-1'] + " - " + request.form['timeslot_3-2']
-        price = request.form['price']
+        price = "£" + request.form['price']
         capacity = request.form['capacity']
         spaces_taken = 0
         organiser_id = 1
@@ -103,7 +171,10 @@ def setup():
 
 @app.route('/booking')
 def booking():
-    return render_template('booking.html')
+    sessions = getSessionsForBookings()
+    timeslots = getTimeslots(sessions)
+    activities = getActivities(sessions)
+    return render_template('booking.html', sessions = sessions, timeslots = timeslots, activities = activities)
 
 @app.route('/booking/review')
 def review():

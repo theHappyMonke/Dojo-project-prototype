@@ -7,89 +7,39 @@
 {% block content %}
     <div class="content">
         <h1>Our session leads</h1>
-        <h3>A little bit about them</h3>
+        <h3>They are the ones that are who teach the sessions, please be respectful!</h3>
         <hr>
     </div>
     <div class="two-column-grid">
+        {% for lead in leads %}
         <div class="two-column-content">
             <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
+                <img id="{{lead[2]}}" src={{lead[1]}} alt="Employee name">
+                <div class="description">{{lead[2] + " " + lead[3]}}</div>
             </div>
-            <h3>Hi! I'm "Employee name"</h3>
+            <h3>Hi! I'm {{lead[2] + " " + lead[3]}}</h3>
             <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
+            <p>{{lead[4]}}</p>
         </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
+        {% endfor %}
     </div>
 
     <div class="content">
         <h1>Our organisers</h1>
-        <h3>A little bit about them</h3>
+        <h3>They are the ones that help create and organise the sessions, make sure to thank them!</h3>
         <hr>
     </div>
     <div class="two-column-grid">
+        {% for organiser in organisers %}
         <div class="two-column-content">
             <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
+                <img src={{organiser[1]}} alt="Employee name">
+                <div class="description">{{organiser[2] + " " + organiser[3]}}</div>
             </div>
-            <h3>Hi! I'm "Employee name"</h3>
+            <h3>Hi! I'm {{organiser[2] + " " + organiser[3]}}</h3>
             <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
+            <p>{{organiser[4]}}</p>
         </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src="/static/logo.png" alt="Employee name">
-                <div class="description">This is a short description of the image.</div>
-            </div>
-            <h3>Hi! I'm "Employee name"</h3>
-            <h5>Little bit about me:</h5>
-            <p>Some information about the employee</p>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}

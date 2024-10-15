@@ -5,6 +5,49 @@
 {% block title %}Booking{% endblock %}
 
 {% block content %}
-    <h1>Booking</h1>
-    <p>Welcome to the booking page.</p>
+    <div class="content">
+        <form action="{{ url_for('booking') }}" method="post">
+            <h3>Select a session</h3>
+            <h5>This will be the session your child wishes to take part in.</h5>
+            
+            <label for="session">Session:</label><br>
+            <select id="session" name="session" required>
+                {% for session in sessions %}
+                <option value="{{session[0]}}">{{session[1]}}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <h3>Select activities</h3>
+            <h5>Please select three starting with the one your child wants most descending.</h5>
+
+            <label for="activity_1">Pick the first activity</label>
+            <select id="activity_1" name="activity_1" required>
+                {% for activity in activities %}
+                <option value="{{activity[0]}}">{{activity[1]}}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="activity_2">Pick the second activity</label>
+            <select id="activity_2" name="activity_2" required>
+                {% for activity in activities %}
+                <option value="{{activity[0]}}">{{activity[1]}}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="activity_3">Pick the third activity</label>
+            <select id="activity_3" name="activity_3" required>
+                {% for activity in activities %}
+                <option value="{{activity[0]}}">{{activity[1]}}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="timeslot_">Pick the your time slot</label>
+            <select id="timeslot" name="timeslot" required>
+                {% for timeslot in timeslots %}
+                <option value="{{timeslot[0]}}">{{timeslot[1]}}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <input type="submit" value="Review booking">
+    </div>
 {% endblock %}
