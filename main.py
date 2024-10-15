@@ -14,7 +14,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS card (id INTEGER PRIMARY KEY NOT NULL
 cursor.execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, card_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS lead (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS organiser (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, price INTEGER NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, activity_1 TEXT NOT NULL, activity_2 TEXT NOT NULL, activity_3 TEXT NOT NULL, timeslot_1 TEXT NOT NULL, timeslot_2 TEXT NOT NULL, timeslot_3 TEXT NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, activity_1 TEXT NOT NULL, activity_2 TEXT NOT NULL, activity_3 TEXT NOT NULL, timeslot_1 TEXT NOT NULL, timeslot_2 TEXT NOT NULL, timeslot_3 TEXT NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
 cursor.close()
 
@@ -25,7 +25,7 @@ app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
 def getSessions(): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT session.id, session.name, session.date, lead.forname, session.location, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
+        cursor.execute("SELECT session.id, session.name, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -38,14 +38,13 @@ def getSessions(): #Query our table to retrieve all of our products
 def getLeads(): #Query our table to retrieve all of our leads
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT lead.id, lead.forname FROM lead")
+        cursor.execute("SELECT id, forname, surname FROM lead")
         leads = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
     finally:
         cursor.close()
     
-    print(leads)
     return leads
 
 #Create a route decorator to tell Flask what URL should trigger our function
@@ -66,28 +65,38 @@ def sessions():
 @app.route('/sessions/setup', methods=['GET', 'POST'])
 def setup():
     if request.method == 'POST':
+        query = """
+            INSERT INTO session (name, description, price, date, location, spaces_taken, capacity, activity_1, activity_2, activity_3, timeslot_1, timeslot_2, timeslot_3, lead_id, organiser_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
         name = request.form['name']
-        price = request.form['price']
+        description = request.form['description']
         date = request.form['date']
+        lead_id = int(request.form['lead_id'])
         location = request.form['location']
         activity_1 = request.form['activity_1']
         activity_2 = request.form['activity_2']
         activity_3 = request.form['activity_3']
-        timeslot_1 = request.form['timeslot_1']
-        timeslot_2 = request.form['timeslot_2']
-        timeslot_3 = request.form['timeslot_3']
-        lead_id = request.form['lead_id']
-        organiser_id = request.form['organiser_id']
+        timeslot_1 = request.form['timeslot_1-1'] + " " + request.form['timeslot_1-2']
+        timeslot_2 = request.form['timeslot_2-1'] + " " + request.form['timeslot_2-2']
+        timeslot_3 = request.form['timeslot_3-1'] + " " + request.form['timeslot_3-2']
+        price = request.form['price']
+        capacity = request.form['capacity']
+        spaces_taken = 0
+        organiser_id = 1
 
         try:
             cursor = connection.cursor()
-            cursor.execute(f"INSERT INTO session VALUES (NULL, {name}, {price}, {date}, {location}, {activity_1}, {activity_2}, {activity_3}, {timeslot_1}, {timeslot_2}, {timeslot_3}, {lead_id}, {organiser_id})")
+            cursor.execute(query, (name, description, price, date, location, spaces_taken, capacity, activity_1, activity_2, activity_3, timeslot_1, timeslot_2, timeslot_3, lead_id, organiser_id))
             connection.commit()
         except sqlite3.Error as error:
             print("Database error:", error)
             flash('Database error')
             leads = getLeads()
             return render_template('setup-session.html', leads = leads)
+        finally:
+            cursor.close()
+            return redirect(url_for('sessions'))
     else:
         leads = getLeads()
         return render_template('setup-session.html', leads = leads)
@@ -135,6 +144,7 @@ def signup():
         surname = request.form['surname']
         email = request.form['email']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
 
         # To differentiate the functions, the program checks the variable form_id to see if it is a signup or login form.
         # If it is a signup form, it will insert the email, username and password into the database.
@@ -154,11 +164,21 @@ def signup():
             return redirect(url_for('sign-up')) #You should provide some feedback to the user rather than just redirect to the same page like this.
         else:
             try:
-                query = "INSERT INTO users VALUES (NULL, ?, ?, ?)" # Use NULL for the ID value, SQLite will generate it for you.
-                insert_data = (forname, surname, email, generate_password_hash(password)) #Create a tuple with all the data we want to INSERT.
-                cursor = connection.cursor()
-                cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
-                connection.commit() #This is necessary to permanently make the change to our DB, the change will not persist without it.
+                if password != confirm_password:
+                    flash('Passwords do not match')
+                    return render_template('sign-up.html')
+                elif len(password) < 8:
+                    flash('Password must be at least 8 characters')
+                    return render_template('sign-up.html')
+                elif password == confirm_password:
+                    query = "INSERT INTO users (forname, surname, email, password) VALUES (?, ?, ?, ?)"
+                    insert_data = (forname, surname, email, generate_password_hash(password)) #Create a tuple with all the data we want to INSERT.
+                    cursor = connection.cursor()
+                    cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
+                    connection.commit() #This is necessary to permanently make the change to our DB, the change will not persist without it.
+                else:
+                    flash('Unknown error')
+                    return render_template('sign-up.html')
             except sqlite3.Error as error:
                 print("Database error:", error)
                 flash('Database error')

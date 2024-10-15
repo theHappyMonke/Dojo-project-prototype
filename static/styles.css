@@ -154,6 +154,7 @@ form > option {
 /* End of Navbar */
 
 /* Classes */
+/* The container must be positioned relative: */
 .content {
     width: 90%;
     margin: 0 auto;
