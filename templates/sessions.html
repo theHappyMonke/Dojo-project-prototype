@@ -18,8 +18,9 @@
             <h5>Date: {{session[3]}}</h5>
             <h5>Lead: {{session[4]}}</h5>
             <h5>Location: {{session[5]}}</h5>
-            <h5>Session content: {{session[6]}}, {{session[7]}}, {{session[8]}}</h5>
-            <h5>Time slots: {{session[9]}}, {{session[10]}}, {{session[11]}}</h5>
+            <h5>Capacity: {{session[6]}} / {{session[7]}} ({{session[7] - session[6]}} spaces left)</h5>
+            <h5>Session content: {{session[8]}}, {{session[9]}}, {{session[10]}}</h5>
+            <h5>Time slots: {{session[11]}}, {{session[12]}}, {{session[13]}}</h5>
         </div>
         {% endfor %}
     </div>

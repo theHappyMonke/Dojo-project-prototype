@@ -20,19 +20,19 @@ cursor.close()
 
 #Create an instance of the Flask class
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
+app.config['SECRET_KEY'] = 'this_is_a_very_secret_key' # This is used for flash to work
 
 def getSessions(): #Query our table to retrieve all of our products
+    data = "session.id, session.name, session.description, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price"
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT session.id, session.name, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.activity_1, session.activity_2, session.activity_3, session.timeslot_1, session.timeslot_2, session.timeslot_3, session.price FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
+        cursor.execute(f"SELECT {data} FROM session JOIN lead ON session.lead_id = lead.id JOIN organiser ON session.organiser_id = organiser.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
     finally: #finally will always run after both a try and except. In other words: no matter if successful or not, this code will run.
         cursor.close()
         
-    print(sessions)
     return sessions
 
 def getLeads(): #Query our table to retrieve all of our leads
@@ -77,9 +77,9 @@ def setup():
         activity_1 = request.form['activity_1']
         activity_2 = request.form['activity_2']
         activity_3 = request.form['activity_3']
-        timeslot_1 = request.form['timeslot_1-1'] + " " + request.form['timeslot_1-2']
-        timeslot_2 = request.form['timeslot_2-1'] + " " + request.form['timeslot_2-2']
-        timeslot_3 = request.form['timeslot_3-1'] + " " + request.form['timeslot_3-2']
+        timeslot_1 = request.form['timeslot_1-1'] + " - " + request.form['timeslot_1-2']
+        timeslot_2 = request.form['timeslot_2-1'] + " - " + request.form['timeslot_2-2']
+        timeslot_3 = request.form['timeslot_3-1'] + " - " + request.form['timeslot_3-2']
         price = request.form['price']
         capacity = request.form['capacity']
         spaces_taken = 0
