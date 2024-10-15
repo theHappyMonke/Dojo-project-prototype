@@ -68,13 +68,13 @@ def getTimeslots(session_id): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
         cursor.execute(f"SELECT id, timeslot_start, timeslot_end FROM timeslot WHERE session_id = {session_id[0]}")
-        activities = cursor.fetchall()
+        timeslots = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
     finally:
         cursor.close()
     
-    return activities
+    return timeslots
 
 def getAuthors(): #Query our table to retrieve all of our authors
     try:
@@ -134,8 +134,8 @@ def sessions():
 def setup():
     if request.method == 'POST':
         query = """
-            INSERT INTO session (name, description, price, date, location, spaces_taken, capacity, activity_1, activity_2, activity_3, timeslot_1, timeslot_2, timeslot_3, lead_id, organiser_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO session (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
         name = request.form['name']
         description = request.form['description']
@@ -145,9 +145,8 @@ def setup():
         activity_1 = request.form['activity_1']
         activity_2 = request.form['activity_2']
         activity_3 = request.form['activity_3']
-        timeslot_1 = request.form['timeslot_1-1'] + " - " + request.form['timeslot_1-2']
-        timeslot_2 = request.form['timeslot_2-1'] + " - " + request.form['timeslot_2-2']
-        timeslot_3 = request.form['timeslot_3-1'] + " - " + request.form['timeslot_3-2']
+        timeslot_start = request.form['timeslot_start']
+        timeslot_end = request.form['timeslot_end']
         price = "£" + request.form['price']
         capacity = request.form['capacity']
         spaces_taken = 0
@@ -172,8 +171,8 @@ def setup():
 @app.route('/booking')
 def booking():
     sessions = getSessionsForBookings()
-    timeslots = getTimeslots(sessions)
-    activities = getActivities(sessions)
+    timeslots = getTimeslots(sessions[0])
+    activities = getActivities(sessions[0])
     return render_template('booking.html', sessions = sessions, timeslots = timeslots, activities = activities)
 
 @app.route('/booking/review')
