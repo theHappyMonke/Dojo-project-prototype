@@ -133,7 +133,7 @@ def sessions():
 @app.route('/sessions/setup', methods=['GET', 'POST'])
 def setup():
     if request.method == 'POST':
-        query = """
+        query_for_session = """
             INSERT INTO session (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
@@ -142,9 +142,7 @@ def setup():
         date = request.form['date']
         lead_id = int(request.form['lead_id'])
         location = request.form['location']
-        activity_1 = request.form['activity_1']
-        activity_2 = request.form['activity_2']
-        activity_3 = request.form['activity_3']
+        activity = request.form['activity']
         timeslot_start = request.form['timeslot_start']
         timeslot_end = request.form['timeslot_end']
         price = "£" + request.form['price']
@@ -154,7 +152,7 @@ def setup():
 
         try:
             cursor = connection.cursor()
-            cursor.execute(query, (name, description, price, date, location, spaces_taken, capacity, activity_1, activity_2, activity_3, timeslot_1, timeslot_2, timeslot_3, lead_id, organiser_id))
+            cursor.execute(query_for_session, (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id))
             connection.commit()
         except sqlite3.Error as error:
             print("Database error:", error)

@@ -24,7 +24,7 @@
             
             <select name="lead_id">
             {% for lead in leads %}
-                <option value="{{ lead[0] }}">{{ lead[1] + " " + lead[2] }}</option>
+                <option value="{{ lead[0] }}">{{ lead[2] + " " + lead[3] }}</option>
             {% endfor %}
             </select><br><br>
             
@@ -53,31 +53,13 @@
             <input type="text" id="activity_3" name="activity_3" placeholder="Enter an activity" required><br><br>
             
 
-            <label for="timeslot_1">Time slot 1:</label><br>
+            <label for="timeslot_start">Time slots:</label><br>
             
-            <label for="timeslot_1-1">Start:</label>
-            <input type="time" id="timeslot_1-1" name="timeslot_1-1" required>
+            <label for="timeslot_start">Start:</label>
+            <input type="time" id="timeslot_start" name="timeslot_start" required>
             
-            <label for="timeslot_1-2">End:</label>
-            <input type="time" id="timeslot_1-2" name="timeslot_1-2" required><br><br>
-            
-
-            <label for="timeslot_2">Time slot 2:</label><br>
-            
-            <label for="timeslot_2-1">Start:</label>
-            <input type="time" id="timeslot_2-1" name="timeslot_2-1" required>
-            
-            <label for="timeslot_2-2">End:</label>
-            <input type="time" id="timeslot_2-2" name="timeslot_2-2" required><br><br>
-            
-            
-            <label for="timeslot_3">Time slot 3:</label><br>
-            
-            <label for="timeslot_3-1">Start:</label>
-            <input type="time" id="timeslot_3-1" name="timeslot_3-1" required>
-            
-            <label for="timeslot_3-2">End:</label>
-            <input type="time" id="timeslot_3-2" name="timeslot_3-2" required><br><br>
+            <label for="timeslot_end">End:</label>
+            <input type="time" id="timeslot_end" name="timeslot_end" required><br><br>
             
             
             <label for="price">Enter price:</label><br>
