@@ -63,8 +63,13 @@
             
             
             <label for="price">Enter price:</label><br>
-            <input type="text" id="price" name="price" placeholder="£--.--" pattern="[0-9]{2}.[0-9]{2}" required><br><br>
+            <input type="text" id="price" name="price" placeholder="--.--" pattern="[0-9]{2}.[0-9]{2}" required><br><br>
             
+
+            <label for="admin_pass">Admin password:</label><br>
+            <input type="password" id="admin_pass" name="admin_pass" placeholder="Enter the admin password" pattern="ADMIN" required><br><br>
+            
+            <!--I am aware this admin password wouldn't work in a proper system, it is only temporary and will be changed to be more secure-->
 
             <input type="submit" value="Set-up session">
             
