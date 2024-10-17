@@ -1,0 +1,22 @@
+{% extends('base.html') %}
+
+{% set active='setup' %}
+
+{% block title %}Set-up{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h1>Set up activities</h1>
+        <h3>Enter the name of the activity you want to add.</h3>
+        <hr>
+        <form action="{{ url_for('setup_timeslots')}}" method="post" id="setup-timeslots" autocomplete = "off">
+            <label for="timeslot_start">Time slots:</label><br>
+                
+            <label for="timeslot_start">Start:</label>
+            <input type="time" id="timeslot_start" name="timeslot_start" required>
+            
+            <label for="timeslot_end">End:</label>
+            <input type="time" id="timeslot_end" name="timeslot_end" required><br><br>
+        </form>
+    </div>
+{% endblock %}

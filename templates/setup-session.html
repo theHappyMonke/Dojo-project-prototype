@@ -7,13 +7,13 @@
 {% block content %}
     <div class="content">
         <h1>Set up a session</h1>
-        <p>Please make sure all information is correct before submitting.</p>
+        <h3>Please make sure all information is correct before submitting.</h3>
         <hr>
         <br>
-        <form action="{{ url_for('setup')}}" method="post" id="setup-session" autocomplete = "off">
+        <form action="{{ url_for('setup')}}" method="post" id="setup-session" autocomplete="off">
             
             <label for="name">Session name:</label><br>
-            <input type="text" id="name" name="name" placeholder="Enter the session name" required><br><br>
+            <input type="text" id="name" name="name" placeholder="Enter the session name" maxlength="16" required><br><br>
             
 
             <label for="date">Date:</label><br>
@@ -39,7 +39,30 @@
 
             <label for="capacity">Capacity:</label><br>
             <input type="number" id="capacity" name="capacity" placeholder="Enter the capacity" min="1" required><br><br>
+            
+            
+            <label for="price">Enter price:</label><br>
+            <input type="text" id="price" name="price" placeholder="--.--" pattern="[0-9]{2}.[0-9]{2}" required><br><br>
+            
 
+            <label for="admin_pass">Admin password:</label><br>
+            <input type="password" id="admin_pass" name="admin_pass" placeholder="Enter the admin password" pattern="ADMIN" required><br><br>
+            
+            <!--I am aware this admin password wouldn't work in a proper system, it is only temporary and will be changed to be more secure-->
+
+            <input type="submit" value="Set-up session"><input type="reset" onclick="resetForm()" value="Clear form">
+            
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                    <p>{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </form>
+    </div>
+{% endblock %}
 
             <label for="activity_1">Activity 1:</label><br>
             <input type="text" id="activity_1" name="activity_1" placeholder="Enter an activity" required><br><br>
@@ -60,27 +83,3 @@
             
             <label for="timeslot_end">End:</label>
             <input type="time" id="timeslot_end" name="timeslot_end" required><br><br>
-            
-            
-            <label for="price">Enter price:</label><br>
-            <input type="text" id="price" name="price" placeholder="--.--" pattern="[0-9]{2}.[0-9]{2}" required><br><br>
-            
-
-            <label for="admin_pass">Admin password:</label><br>
-            <input type="password" id="admin_pass" name="admin_pass" placeholder="Enter the admin password" pattern="ADMIN" required><br><br>
-            
-            <!--I am aware this admin password wouldn't work in a proper system, it is only temporary and will be changed to be more secure-->
-
-            <input type="submit" value="Set-up session">
-            
-            
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                    <p>{{ message }}</p>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </form>
-    </div>
-{% endblock %}

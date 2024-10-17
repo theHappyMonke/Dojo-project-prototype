@@ -49,6 +49,10 @@ form > input[type="submit"]:hover {
     background-color: #eeeff0;
 }
 
+form > input[type="reset"]:hover {
+    background-color: #eeeff0;
+}
+
 form > option {
     margin: 10px;
     padding: 10px;
@@ -166,6 +170,14 @@ form > option {
     background-color: #dfe0e2;
     height: 3px;
     border: none;
+}
+
+.content a {
+    color: #b70900;
+}
+
+.content a:active {
+    color: #ca0000;
 }
 
 .one-column-grid {

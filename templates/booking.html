@@ -44,7 +44,7 @@
             <label for="timeslot_">Pick the your time slot</label>
             <select id="timeslot" name="timeslot" required>
                 {% for timeslot in timeslots %}
-                <option value="{{timeslot[0]}}">{{timeslot[1] + " - " + timeslot[2]}}</option>
+                <option value="{{timeslot[0]}}" disabled>{{timeslot[1] + " - " + timeslot[2]}}</option>
                 {% endfor %}
             </select><br><br>
 

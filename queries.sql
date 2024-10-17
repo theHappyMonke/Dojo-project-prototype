@@ -1,9 +1,14 @@
+DROP TABLE activity;
+DROP TABLE booking;
 DROP TABLE card;
-DROP TABLE session;
+DROP TABLE contact;
 DROP TABLE lead;
 DROP TABLE organiser;
+DROP TABLE quote;
+DROP TABLE session;
+DROP TABLE timeslot;
 DROP TABLE user;
-DROP TABLE booking;
+
 
 INSERT INTO quote VALUES (NULL, 'This is a quote about the company', 'author');
 INSERT INTO organiser VALUES (NULL, '/static/employee_photos/logo.png', 'John', 'Steve', 'sj@example.com', 'pass', 'This is a quote about me');
