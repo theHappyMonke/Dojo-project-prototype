@@ -191,25 +191,28 @@ def setup():
 @login_required
 def setup_activity():
     if request.method=='POST':
-        query_for_activity = """
-            INSERT INTO activity (session_id, activity) 
-            VALUES (?, ?)
-            """
-        activity = request.form['activity']
+        if x:
+            print("x is true")
+        else:
+            query_for_activity = """
+                INSERT INTO activity (session_id, activity) 
+                VALUES (?, ?)
+                """
+            activity = request.form['activity']
 
-        try:
-            cursor = connection.cursor()
-            cursor.execute("SELECT id FROM session WHERE id = (SELECT MAX(id) FROM session)") #Get the last session ID
-            session_id = cursor.fetchone()
-            cursor.execute(query_for_activity, (session_id, activity))
-            connection.commit()
-        except sqlite3.Error as error:
-            print("Database error:", error)
-            flash('Database error')
-            return render_template('setup-activity.html')
-        finally:
-            cursor.close()
-            return render_template('setup-activity.html')
+            try:
+                cursor = connection.cursor()
+                cursor.execute("SELECT id FROM session WHERE id = (SELECT MAX(id) FROM session)") #Get the last session ID
+                session_id = cursor.fetchone()
+                cursor.execute(query_for_activity, (session_id, activity))
+                connection.commit()
+            except sqlite3.Error as error:
+                print("Database error:", error)
+                flash('Database error')
+                return render_template('setup-activity.html')
+            finally:
+                cursor.close()
+                return render_template('setup-activity.html')
     else:
         return render_template('setup-activity.html')
 
@@ -346,7 +349,7 @@ def signout():
     return redirect(url_for('signin'))
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found(error):
     return render_template('404.html')
 
 if __name__ == '__main__':

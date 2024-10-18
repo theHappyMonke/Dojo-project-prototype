@@ -194,7 +194,7 @@ form > option {
     text-align: center;
     margin: 1em;
     font-size: 40px;
-    width: 1400px;
+    width: 100%;
     color: #001427;
     border: 2px solid #dfe0e2;
     padding: 10px;
@@ -310,9 +310,5 @@ form > option {
     font-size: 80px;
     background-color: #001427;
     color: #dfe0e2;
-}
-
-#navbar-break {
-    height: 102px;
 }
 /* End of Ids */
