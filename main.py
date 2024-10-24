@@ -2,7 +2,7 @@
 
 # Import the Flask module from the flask package
 from flask import Flask, render_template, request, redirect, url_for, flash #Flask library and functions
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash #This library lets us easily hash + verify passwords
 import sqlite3
 
@@ -79,7 +79,7 @@ def getTimeslots(session_id): #Query our table to retrieve all of our products
     finally:
         cursor.close()
     
-    return timeslots
+    return timeslots 
 
 def getAuthors(): #Query our table to retrieve all of our authors
     try:
@@ -174,24 +174,38 @@ def setup():
         try:
             cursor = connection.cursor()
             cursor.execute(query_for_session, (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id))
-            connection.commit()
-        except sqlite3.Error as error:
+            exists = cursor.fetchone()
+        except:
             print("Database error:", error)
             flash('Database error')
-            leads = getLeads()
-            return render_template('setup-session.html', leads = leads)
         finally:
-            cursor.close()
-            return redirect(url_for('setup_activity'))
+            if exists:
+                leads = getLeads()
+                flash('Session name already exists')
+                return render_template('setup-session.html', leads = leads)
+            else:
+                try:
+                    cursor = connection.cursor()
+                    cursor.execute(query_for_session, (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id))
+                    connection.commit()
+                except sqlite3.Error as error:
+                    print("Database error:", error)
+                    flash('Database error')
+                    leads = getLeads()
+                    return render_template('setup-session.html', leads = leads)
+                finally:
+                    cursor.close()
+                    name = setup_activity(name)
+                    return render_template('setup-session.html', name = name)
     else:
         leads = getLeads()
         return render_template('setup-session.html', leads = leads)
 
 @app.route('/sessions/setup/activity', methods=['GET', 'POST'])
 @login_required
-def setup_activity():
+def setup_activity(name):
     if request.method=='POST':
-        if x:
+        if name:
             print("x is true")
         else:
             query_for_activity = """
@@ -202,19 +216,19 @@ def setup_activity():
 
             try:
                 cursor = connection.cursor()
-                cursor.execute("SELECT id FROM session WHERE id = (SELECT MAX(id) FROM session)") #Get the last session ID
+                cursor.execute(f"SELECT id FROM session WHERE name = '{name}'") #Get the last session ID
                 session_id = cursor.fetchone()
                 cursor.execute(query_for_activity, (session_id, activity))
                 connection.commit()
             except sqlite3.Error as error:
                 print("Database error:", error)
                 flash('Database error')
-                return render_template('setup-activity.html')
+                return name
             finally:
                 cursor.close()
-                return render_template('setup-activity.html')
+                return name
     else:
-        return render_template('setup-activity.html')
+        return name
 
 @app.route('/sessions/setup/timeslot', methods=['GET', 'POST'])
 @login_required
