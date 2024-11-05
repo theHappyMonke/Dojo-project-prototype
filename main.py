@@ -195,40 +195,46 @@ def setup():
                     return render_template('setup-session.html', leads = leads)
                 finally:
                     cursor.close()
-                    name = setup_activity(name)
-                    return render_template('setup-session.html', name = name)
+                    return render_template('setup-activity.html', session = name)
     else:
         leads = getLeads()
         return render_template('setup-session.html', leads = leads)
 
 @app.route('/sessions/setup/activity', methods=['GET', 'POST'])
 @login_required
-def setup_activity(name):
+def setup_activity():
     if request.method=='POST':
-        if name:
-            print("x is true")
-        else:
-            query_for_activity = """
-                INSERT INTO activity (session_id, activity) 
-                VALUES (?, ?)
-                """
-            activity = request.form['activity']
+        query_for_activity = """
+            INSERT INTO activity (session_id, activity) 
+            VALUES (?, ?)
+            """
+        
+        form_id = request.form['form_id']
+        session = request.form['session']
 
+        if form_id == "setup_activity":
+            activity = request.form['activity']
+            
             try:
                 cursor = connection.cursor()
-                cursor.execute(f"SELECT id FROM session WHERE name = '{name}'") #Get the last session ID
-                session_id = cursor.fetchone()
-                cursor.execute(query_for_activity, (session_id, activity))
+                cursor.execute(f"SELECT id, name FROM session WHERE name = '{session}'") #Get the last session ID
+                session = cursor.fetchone()
+                cursor.execute(query_for_activity, (session[0], activity))
                 connection.commit()
             except sqlite3.Error as error:
                 print("Database error:", error)
                 flash('Database error')
-                return name
+                return render_template('setup-activity.html', session = session[1])
             finally:
                 cursor.close()
-                return name
+                return render_template('setup-activity.html', session = session[1])
+        elif form_id == "go_to_timeslot":
+            return render_template('setup-timeslot.html', session = session)
+        else:
+            flash('Function error')
+            return render_template('setup-activity.html', session = "")
     else:
-        return name
+        return render_template('setup-activity.html', session = "")
 
 @app.route('/sessions/setup/timeslot', methods=['GET', 'POST'])
 @login_required
@@ -238,24 +244,28 @@ def setup_timeslot():
             INSERT INTO timeslot (session_id, timeslot_start, timeslot_end) 
             VALUES (?, ?, ?)
             """
+        session = request.form['session']
         timeslot_start = request.form['timeslot_start']
         timeslot_end = request.form['timeslot_end']
 
         try:
             cursor = connection.cursor()
-            cursor.execute("SELECT id FROM session WHERE id = (SELECT MAX(id) FROM session)") #Get the last session ID
-            session_id = cursor.fetchone()
-            cursor.execute(query_for_timeslot, (session_id, timeslot_start, timeslot_end))
-            connection.commit()
+            cursor.execute(f"SELECT id, name FROM session WHERE name = {session[0]}") #Get the last session ID
+            session = cursor.fetchone()
+            if session:
+                cursor.execute(query_for_timeslot, (session[0], timeslot_start, timeslot_end))
+                connection.commit()
+            else:
+                flash('Session does not exist')
         except sqlite3.Error as error:
             print("Database error:", error)
             flash('Database error')
-            return render_template('setup-timeslot.html')
+            return render_template('setup-timeslot.html', session = session[1])
         finally:
             cursor.close()
-            return render_template('setup-timeslot.html')
+            return render_template('setup-timeslot.html', session = session[1])
     else:
-        return render_template('setup-timeslot.html')
+        return render_template('setup-timeslot.html', session = "")
 
 @app.route('/booking')
 @login_required

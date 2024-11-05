@@ -244,6 +244,60 @@ form > input[type="reset"]:hover {
 .three-column-content > h4 {
     text-align: right;
 }
+
+/* Dropdown Button */
+.dropbtn {
+    background-color: #dfe0e2;
+    font-family: Verdana (sans-serif);
+    padding: 8px 16px;
+    height: 42px;
+    min-width: 62px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #001427;
+    text-align: center;
+    align-content: center;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #eeeff0;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #eeeff0;
+    min-width: 160px;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-radius: 10px;
+}
+
+/* Change color of dropdown links on hover */
+    .dropdown-content a:hover {background-color: #ddd;}
+  
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+    .show {display:block;}
+
 /*
     This below is for accessability and will show the description of the image when hovered over.
 */

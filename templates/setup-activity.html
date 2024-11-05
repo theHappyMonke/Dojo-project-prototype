@@ -9,11 +9,22 @@
         <h1>Set up activities</h1>
         <h3>Enter the name of the activity you want to add.</h3>
         <hr>
-        <form action="{{ url_for('setup_activity')}}" method="post" id="setup-timeslots" autocomplete = "off">
+        <form action="{{ url_for('setup_activity')}}" method="post" id="setup-activity" autocomplete = "off">
+            <input type="hidden" name="form_id" value="setup_activity">
+            <label for="session">Session name:</label>
+            <input type="text" id="session" name="session" value="{{session}}" required><br><br>
+
             <label for="activity">Activity name:</label>
             <input type="text" id="activity" name="activity" required><br><br>
             
-            <input type="submit" value="Add another activity">
+            <input type="submit" value="Add another activity"><input type="reset" onclick="resetForm()" value="Clear form">
         </form>
+        <br>
+        <form action="{{ url_for('setup_activity') }}" method="post" id="got-to-timeslot" autocomplete="off">
+            <input type="hidden" name="form_id" value="go_to_timeslot">
+            <input type="hidden" name="session" value="{{session}}" required>
+            <input type="submit" value="Start adding timeslots">
+        </form>
+        
     </div>
 {% endblock %}
