@@ -81,17 +81,17 @@ def getTimeslots(session_id): #Query our table to retrieve all of our products
     
     return timeslots 
 
-def getAuthors(): #Query our table to retrieve all of our authors
+def getReviews(): #Query our table to retrieve all of our reviews
     try:
         cursor = connection.cursor()
         cursor.execute("SELECT id, quote, author FROM quote")
-        authors = cursor.fetchall()
+        reviews = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
     finally:
         cursor.close()
     
-    return authors
+    return reviews
 
 def getLeads(): #Query our table to retrieve all of our leads
     try:
@@ -139,8 +139,8 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/home')
 def home():
-    authors = getAuthors()
-    return render_template('home.html', authors = authors)
+    reviews = getReviews()
+    return render_template('home.html', reviews = reviews)
 
 @app.route('/about')
 def about():
