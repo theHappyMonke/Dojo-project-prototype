@@ -374,6 +374,11 @@ def signout():
     logout_user()
     return redirect(url_for('signin'))
 
+@app.route('/admin')
+@login_required
+def admin():
+    return render_template('admin-panel.html')
+
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html')
