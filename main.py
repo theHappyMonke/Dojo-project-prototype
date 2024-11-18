@@ -348,7 +348,7 @@ def signup():
                     flash('Password must be at least 8 characters')
                     return render_template('sign-up.html')
                 elif password == confirm_password:
-                    query = "INSERT INTO user (forname, surname, email, password) VALUES (?, ?, ?, ?)"
+                    query = "INSERT INTO user (forname, surname, email, password, access) VALUES (?, ?, ?, ?, 'none')"
                     insert_data = (forname, surname, email, generate_password_hash(password),) #Create a tuple with all the data we want to INSERT.
                     cursor = connection.cursor()
                     cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
