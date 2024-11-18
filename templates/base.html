@@ -28,14 +28,6 @@
                     <a href="{{ url_for('sessions') }}" {% if active=="sessions" %}class="active"{% endif %}>Sessions</a>
                     <a href="{{ url_for('booking') }}" {% if active=="booking" %}class="active"{% endif %}>Booking</a>
                     <a href="{{ url_for('contact') }}" {% if active=="contact" %}class="active"{% endif %}>Contact</a>
-                    <div class="dropdown">
-                        <button onclick="myFunction()" class="dropbtn">Set-up</button>
-                        <div id="myDropdown" class="dropdown-content">
-                          <a href="{{ url_for('setup') }}">Session</a>
-                          <a href="{{ url_for('setup_activity') }}">Activity</a>
-                          <a href="{{ url_for('setup_timeslot') }}">Time slot</a>
-                        </div>
-                      </div>
                 </div>
 
                 <div id="auth-buttons">

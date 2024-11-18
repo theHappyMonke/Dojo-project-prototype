@@ -11,7 +11,7 @@ connection = sqlite3.connect('dojobase.db', check_same_thread=False)
 
 cursor = connection.cursor() #Cursor is a control structure used to traverse and fetch records from the database. Cursor has the ability to store multiple rows returned from a query.
 cursor.execute("CREATE TABLE IF NOT EXISTS card      (id INTEGER PRIMARY KEY NOT NULL, card_holder TEXT NOT NULL, PAN TEXT NOT NULL, expiry_date TEXT NOT NULL, service_code TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS user      (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, admin BOOLEAN NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS user      (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS lead      (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS review    (id INTEGER PRIMARY KEY NOT NULL, review TEXT NOT NULL, author TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS session   (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
