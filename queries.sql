@@ -4,7 +4,7 @@ DROP TABLE card;
 DROP TABLE contact;
 DROP TABLE lead;
 DROP TABLE organiser;
-DROP TABLE review;
+DROP TABLE reviews;
 DROP TABLE session;
 DROP TABLE timeslot;
 DROP TABLE user;
