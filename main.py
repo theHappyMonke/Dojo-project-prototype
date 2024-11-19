@@ -378,6 +378,11 @@ def signout():
     logout_user()
     return redirect(url_for('signin'))
 
+@app.route('/user')
+@login_required
+def user():
+    return render_template('user-panel.html')
+
 @app.route('/admin')
 @login_required
 def admin():
