@@ -278,7 +278,7 @@ def booking():
         activities = getActivities(sessions[0])
         return render_template('booking.html', sessions = sessions, timeslots = timeslots, activities = activities)
     except:
-        return render_template('booking.html')
+        return render_template('booking.html', session = 'none')
         
 
 @app.route('/booking/review')

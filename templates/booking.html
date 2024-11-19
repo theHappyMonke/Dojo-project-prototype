@@ -6,6 +6,7 @@
 
 {% block content %}
     <div class="content">
+        {% if session != 'none' %}
         <form action="{{ url_for('booking') }}" method="post">
             <h3>Select a session</h3>
             <h5>This will be the session your child wishes to take part in.</h5>
@@ -37,7 +38,7 @@
             <label for="activity_3">Pick the third activity</label>
             <select id="activity_3" name="activity_3" required>
                 {% for activity in activities %}
-                <option value="{{activity[0]}}">{{activity[1]}}</option>
+                <option value="{{activity[0]}}">{+{activity[1]}}</option>
                 {% endfor %}
             </select><br><br>
 
@@ -49,5 +50,8 @@
             </select><br><br>
 
             <input type="submit" value="Review booking">
+        {% else %}
+        <h1>There are currently no sessions</h1>
+        {% endif %}
     </div>
 {% endblock %}
