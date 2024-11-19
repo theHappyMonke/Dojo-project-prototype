@@ -272,10 +272,14 @@ def setup_timeslot():
 @app.route('/booking')
 @login_required
 def booking():
-    sessions = getSessionsForBookings()
-    timeslots = getTimeslots(sessions[0])
-    activities = getActivities(sessions[0])
-    return render_template('booking.html', sessions = sessions, timeslots = timeslots, activities = activities)
+    try:
+        sessions = getSessionsForBookings()
+        timeslots = getTimeslots(sessions[0])
+        activities = getActivities(sessions[0])
+        return render_template('booking.html', sessions = sessions, timeslots = timeslots, activities = activities)
+    except:
+        return render_template('booking.html')
+        
 
 @app.route('/booking/review')
 @login_required

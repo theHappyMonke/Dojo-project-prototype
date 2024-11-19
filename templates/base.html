@@ -32,6 +32,7 @@
 
                 <div id="auth-buttons">
                     {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('admin') }}">User panel</a>
                     <a href="{{ url_for('signout') }}">Logout</a>
                     {% else %}
                     <a href="{{ url_for('signin') }}">Sign in</a>

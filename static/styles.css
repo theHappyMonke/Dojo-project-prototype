@@ -188,7 +188,6 @@ form > input[type="reset"]:hover {
 
 .two-column-grid {
     display: grid;
-    padding: 2em;
     max-width: 80%;
     height: auto;
     margin: 2em auto;
