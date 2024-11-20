@@ -312,7 +312,7 @@ def signin():
             if check_password_hash(user[4], password): #[4] is the password field.
                 login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
                 flash('Logged in successfully.')
-                return redirect(url_for('home')) #Redirect to the homepage on correct credentials
+                return redirect(url_for('user')) #Redirect to the user panel on correct credentials
             else: #incorrect password
                 flash('Invalid email or password')
                 return render_template('sign-in.html') #Return to login page if not a match (you probably want to display an error message here!)
