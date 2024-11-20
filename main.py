@@ -32,10 +32,10 @@ login_manager.init_app(app)
 login_manager.login_view = 'signin'
 
 def getSessions(): #Query our table to retrieve all of our products
-    data = "session.id, session.name, session.description, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.price"
+    data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM session JOIN lead ON session.lead_id = lead.id")
+        cursor.execute(f"SELECT {data} FROM session JOIN leads ON session.lead_id = lead.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -45,10 +45,10 @@ def getSessions(): #Query our table to retrieve all of our products
     return sessions
 
 def getSessionsForBookings(): #Query our table to retrieve all of our products
-    data = "session.id, session.name, session.description, session.date, lead.forname, session.location, session.spaces_taken, session.capacity, session.price"
+    data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM session JOIN lead ON session.lead_id = lead.id")
+        cursor.execute(f"SELECT {data} FROM session JOIN leads ON session.lead_id = leads.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -96,7 +96,7 @@ def getReviews(): #Query our table to retrieve all of our reviews
 def getLeads(): #Query our table to retrieve all of our leads
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, photo, forname, surname, quote FROM lead")
+        cursor.execute("SELECT id, photo, forname, surname, quote FROM leads")
         leads = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
