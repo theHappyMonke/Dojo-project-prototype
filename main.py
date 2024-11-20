@@ -368,7 +368,12 @@ def signup():
                 cursor.close()
      
             flash('Registration successful')
-            return redirect(url_for('signin')) #Successful signup - return to login page
+            cursor = connection.cursor()
+            cursor.execute(f"SELECT * FROM user WHERE email='{email}'")
+            user = cursor.fetchone()
+            cursor.close
+            login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
+            return redirect(url_for('user')) #Successful signup - move to user panel
     else:
         return render_template('sign-up.html')
 
