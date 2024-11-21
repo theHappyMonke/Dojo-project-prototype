@@ -297,8 +297,8 @@ form > input[type="reset"]:hover {
 .event-item {
     padding: 15px;
     margin: 10px 0;
-    background-color: #e3f2fd; /* Light blue background */
-    border-left: 5px solid #2196F3; /* Colorful left border */
+    background-color: #eeeff0; /* Light blue background */
+    border-left: 5px solid #001427; /* Colorful left border */
     border-radius: 4px;
     font-weight: bold; /* Bold text for emphasis */
     transition: transform 0.2s;
