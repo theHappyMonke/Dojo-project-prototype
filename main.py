@@ -32,17 +32,17 @@ login_manager.init_app(app)
 login_manager.login_view = 'signin'
 
 def getSessions(): #Query our table to retrieve all of our products
-    data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
+    data = "sessions.id, sessions.name, sessions.description, sessions.date, leads.forname, sessions.location, sessions.spaces_taken, sessions.capacity, sessions.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM session JOIN leads ON session.lead_id = lead.id")
+        cursor.execute(f"SELECT {data} FROM sessions JOIN leads ON sessions.lead_id = lead.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
+        return
     finally: #finally will always run after both a try and except. In other words: no matter if successful or not, this code will run.
         cursor.close()
-        
-    return sessions
+        return sessions
 
 def getBookings():
     try:
