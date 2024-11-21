@@ -1,1 +1,1 @@
-function resetForm() {  document.getElementById("setup-session").reset()}
+function resetForm(){document.getElementById("setup-session").reset()}
