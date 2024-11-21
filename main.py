@@ -44,19 +44,6 @@ def getSessions(): #Query our table to retrieve all of our products
         cursor.close()
         return sessions
 
-def getBookings():
-    try:
-        quote = "SELECT * FROM bookings WHERE user_id = ?"
-        cursor = connection.cursor()
-        cursor.execute((quote), (user.id,))
-        bookings = cursor.fetchall()
-    except sqlite3.error as error:
-        flash('Database error', error)
-    finally:
-        cursor.close
-    
-    return bookings
-
 def getSessionsForBookings(): #Query our table to retrieve all of our products
     data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
     try:
@@ -97,7 +84,7 @@ def getTimeslots(session_id): #Query our table to retrieve all of our products
 def getReviews(): #Query our table to retrieve all of our reviews
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, review, author FROM review")
+        cursor.execute("SELECT id, review, author FROM reviews")
         reviews = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -117,18 +104,6 @@ def getLeads(): #Query our table to retrieve all of our leads
         cursor.close()
     
     return leads
-
-def getOrganisers(): #Query our table to retrieve all of our organisers
-    try:
-        cursor = connection.cursor()
-        cursor.execute("SELECT id, photo, forname, surname, quote FROM organiser")
-        organisers = cursor.fetchall()
-    except sqlite3.Error as error:
-        print("Database error:", error)
-    finally:
-        cursor.close()
-    
-    return organisers
 
 class User(UserMixin):
     def __init__(self, id, forname, surname, email, password, access):
@@ -159,8 +134,7 @@ def home():
 @app.route('/about')
 def about():
     leads = getLeads()
-    organisers = getOrganisers()
-    return render_template('about.html', leads = leads, organisers = organisers)
+    return render_template('about.html', leads = leads  )
 
 @app.route('/sessions')
 def sessions():
@@ -324,7 +298,7 @@ def signin():
         if user: #if username is found          
             #Check if password entered on login page matches DB password against that username.
             if check_password_hash(user[4], password): #[4] is the password field.
-                login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
+                login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
                 flash('Logged in successfully.')
                 return redirect(url_for('user')) #Redirect to the user panel on correct credentials
             else: #incorrect password
@@ -386,7 +360,7 @@ def signup():
             cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
             user = cursor.fetchone()
             cursor.close
-            login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
+            login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
             return redirect(url_for('user')) #Successful signup - move to user panel
     else:
         return render_template('sign-up.html')
@@ -400,8 +374,18 @@ def signout():
 @app.route('/user')
 @login_required
 def user():
-    bookings = getBookings
-    return render_template('user-panel.html', bookings = bookings)
+    try:
+        quote = "SELECT * FROM bookings WHERE user_id = ?"
+        cursor = connection.cursor()
+        cursor.execute((quote), (user[0],))
+        bookings = cursor.fetchall()
+        cursor.close()
+        if bookings:
+            return render_template('user-panel.html', bookings = bookings)
+    except sqlite3.Error as error:
+        flash('Database error', error)
+    finally:
+        return render_template('user-panel.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
