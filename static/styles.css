@@ -278,6 +278,35 @@ form > input[type="reset"]:hover {
 .image-container:hover .description {
     display: block;
 }
+
+.upcoming-events {
+    margin-bottom: 40px;
+}
+
+.upcoming-events h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.upcoming-events ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.event-item {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #e3f2fd; /* Light blue background */
+    border-left: 5px solid #2196F3; /* Colorful left border */
+    border-radius: 4px;
+    font-weight: bold; /* Bold text for emphasis */
+    transition: transform 0.2s;
+}
+
+.event-item:hover {
+    transform: scale(1.02); /* Slightly enlarge on hover */
+}
 /* End of Classes */
 
 /* Ids */
