@@ -7,9 +7,16 @@
         <h1>Admin panel</h1>
         <hr>
     </div>
+    {% if current_user.access == 'admin' %}
     <div class="one-column-grid">
         <div class="one-column-content">
             <p>hi</p>
         </div>
     </div>
+    {% else %}
+    <div class="content">
+        <p>You do not have access to this page.</p>
+        <a href="{{ url_for('home') }}">Return to the home page</a>
+    </div>
+    {% endif %}
 {% endblock %}
