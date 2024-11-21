@@ -14,13 +14,18 @@
         </div>
         <div class="two-column-content">
             <p>hi</p>
+            {% if current_user.access=="admin" %}
+            <a href="{{ url_for('admin') }}">Access admin panel</a>
+            {% endif %}
         </div>
     </div>
     <div class="content">
         <div class="upcoming-events">
             <h2>Your upcoming bookings</h2>
             <ul>
-                <li class="event-item">HIPPO</li>
+                {% for booking in bookings %}
+                <li class="event-item">hippo</li>
+                {% endfor %}
             </ul>
         </div>
     </div>

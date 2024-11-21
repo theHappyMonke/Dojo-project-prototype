@@ -44,6 +44,19 @@ def getSessions(): #Query our table to retrieve all of our products
         
     return sessions
 
+def getBookings():
+    try:
+        quote = "SELECT * FROM bookings WHERE user_id = ?"
+        cursor = connection.cursor()
+        cursor.execute((quote), (user.id,))
+        bookings = cursor.fetchall()
+    except sqlite3.error as error:
+        flash('Database error', error)
+    finally:
+        cursor.close
+    
+    return bookings
+
 def getSessionsForBookings(): #Query our table to retrieve all of our products
     data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
     try:
@@ -118,12 +131,13 @@ def getOrganisers(): #Query our table to retrieve all of our organisers
     return organisers
 
 class User(UserMixin):
-    def __init__(self, id, forname, surname, email, password):
+    def __init__(self, id, forname, surname, email, password, access):
         self.id = id
         self.forname = forname
         self.surname = surname
         self.email = email
         self.password = password
+        self.access = access
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -132,7 +146,7 @@ def load_user(user_id):
     user = cursor.fetchone()
     cursor.close()
     if user:
-        return User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4])
+        return User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5])
     return None
 
 #Create a route decorator to tell Flask what URL should trigger our function
@@ -386,9 +400,10 @@ def signout():
 @app.route('/user')
 @login_required
 def user():
-    return render_template('user-panel.html')
+    bookings = getBookings
+    return render_template('user-panel.html', bookings = bookings)
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
     return render_template('admin-panel.html')
