@@ -19,7 +19,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT N
 cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_in_sessions (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, activity_id INTEGER NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id PRIMARY KEY NOT NULL, activity_name)")
+cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id INTEGER PRIMARY KEY NOT NULL, activity_name)")
 cursor.close()
 
 #Create an instance of the Flask class
@@ -142,7 +142,7 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM user WHERE id=?", (user_id,))
+    cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
     user = cursor.fetchone()
     cursor.close()
     if user:
@@ -312,7 +312,7 @@ def signin():
 
         try:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM user WHERE email='{email}'")
+            cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
             user = cursor.fetchone() #fetchone() vs fetchall() depending on the situation. We only want to find 1 user here.
         except sqlite3.Error as error:
             print("Database error:", error)
@@ -347,7 +347,7 @@ def signup():
 
         try:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM user WHERE email='{email}'")
+            cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
             user = cursor.fetchone()
         except sqlite3.Error as error:
             print("Database error:", error)
@@ -366,7 +366,7 @@ def signup():
                     flash('Password must be at least 8 characters')
                     return render_template('sign-up.html')
                 elif password == confirm_password:
-                    query = "INSERT INTO user (forname, surname, email, password, access) VALUES (?, ?, ?, ?, 'none')"
+                    query = "INSERT INTO users (forname, surname, email, password, access) VALUES (?, ?, ?, ?, 'none')"
                     insert_data = (forname, surname, email, generate_password_hash(password),) #Create a tuple with all the data we want to INSERT.
                     cursor = connection.cursor()
                     cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
@@ -383,7 +383,7 @@ def signup():
      
             flash('Registration successful')
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM user WHERE email='{email}'")
+            cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
             user = cursor.fetchone()
             cursor.close
             login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
