@@ -14,9 +14,9 @@ cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY NOT NUL
 cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY NOT NULL, review TEXT NOT NULL, author TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_in_sessions (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, activity_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id INTEGER PRIMARY KEY NOT NULL, activity_name)")
@@ -35,7 +35,7 @@ def getSessions(): #Query our table to retrieve all of our products
     data = "sessions.id, sessions.name, sessions.description, sessions.date, leads.forname, sessions.location, sessions.spaces_taken, sessions.capacity, sessions.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM sessions JOIN leads ON sessions.lead_id = lead.id")
+        cursor.execute(f"SELECT {data} FROM sessions JOIN leads ON sessions.lead_id = leads.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -73,7 +73,7 @@ def getSessionsForBookings(): #Query our table to retrieve all of our products
 def getActivities(session_id): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT id, activity FROM activity WHERE session_id = {session_id[0]}")
+        cursor.execute(f"SELECT id, activity FROM activity WHERE session_id = {session_id}")
         activities = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -85,7 +85,7 @@ def getActivities(session_id): #Query our table to retrieve all of our products
 def getTimeslots(session_id): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT id, timeslot_start, timeslot_end FROM timeslot WHERE session_id = {session_id[0]}")
+        cursor.execute(f"SELECT id, timeslot_start, timeslot_end FROM timeslot WHERE session_id = {session_id}")
         timeslots = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
