@@ -276,7 +276,8 @@ def review():
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    leads = getLeads
+    return render_template('contact.html', leads = leads)
 
 @app.route('/sign-in', methods=['GET', 'POST'])
 def signin():
