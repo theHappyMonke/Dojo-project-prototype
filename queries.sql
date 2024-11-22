@@ -21,4 +21,4 @@ INSERT INTO activities_in_sessions VALUES (NULL, 1, 2);
 INSERT INTO activities_in_sessions VALUES (NULL, 1, 3);
 INSERT INTO timeslot VALUES (NULL, 1, '00:00', '12:00');
 
-UPDATE user SET access = "admin" WHERE id = 1
+UPDATE users SET access = "admin" WHERE id = 1
