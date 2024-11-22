@@ -11,17 +11,17 @@
     <hr>
 </div>
 <div class="one-column-grid">
+    {% for lead in leads %}
     <div class="one-column-content">
         <div class="image-container">
-            <img src="/static/employee_photos/logo.png" alt="Employee name">
-            <div class="description">This is a short description of the image.</div>
+            <img src={{lead[1]}} alt="Employee name">
+            <div class="description">{{lead[2] + " " + lead[3]}}</div>
         </div>
-        {% for lead in leads %}
-        <h3>Hi! I'm "Employee name"</h3>
+        <h3>Hi! I'm {{lead[2] + " " + lead[3]}}</h3>
         <h5>Little bit about me:</h5>
-        <p>Some information about the employee</p>
-        <a href="mailto:23parsonsb830@collyers.ac.uk">ben</a>
-        {% endfor %}
+        <p>{{lead[4]}}</p>
+        <a href="mailto:{{lead[5]}}">{{lead[5]}}</a>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

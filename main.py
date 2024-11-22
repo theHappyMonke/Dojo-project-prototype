@@ -96,7 +96,7 @@ def getReviews(): #Query our table to retrieve all of our reviews
 def getLeads(): #Query our table to retrieve all of our leads
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, photo, forname, surname, quote FROM leads")
+        cursor.execute("SELECT id, photo, forname, surname, quote, email FROM leads")
         leads = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -276,7 +276,7 @@ def review():
 
 @app.route('/contact')
 def contact():
-    leads = getLeads
+    leads = getLeads()
     return render_template('contact.html', leads = leads)
 
 @app.route('/sign-in', methods=['GET', 'POST'])
