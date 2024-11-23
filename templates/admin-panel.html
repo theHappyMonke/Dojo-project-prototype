@@ -10,7 +10,8 @@
     {% if current_user.access == 'admin' %}
     <div class="one-column-grid">
         <div class="one-column-content">
-            <p>hi</p>
+            {% for user in users %}
+            {% endfor %}
         </div>
     </div>
     {% else %}

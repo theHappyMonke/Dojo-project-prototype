@@ -391,7 +391,14 @@ def user():
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    return render_template('admin-panel.html')
+    if request.method == 'POST':
+        form_id = request.form['form_id']
+        if form_id == 'add':
+            user_id = request.form['user_id']
+        elif form_id == 'remove':
+            print()
+    else:
+        return render_template('admin-panel.html')
 
 @app.errorhandler(404)
 def page_not_found(error):
