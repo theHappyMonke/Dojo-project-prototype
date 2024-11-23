@@ -23,23 +23,4 @@
         </div>
         {% endfor %}
     </div>
-
-    <div class="content">
-        <h1>Our organisers</h1>
-        <h3>They are the ones that help create and organise the sessions, make sure to thank them!</h3>
-        <hr>
-    </div>
-    <div class="two-column-grid">
-        {% for organiser in organisers %}
-        <div class="two-column-content">
-            <div class="image-container">
-                <img src={{organiser[1]}} alt="Employee name">
-                <div class="description">{{organiser[2] + " " + organiser[3]}}</div>
-            </div>
-            <h3>Hi! I'm {{organiser[2] + " " + organiser[3]}}</h3>
-            <h5>Little bit about me:</h5>
-            <p>{{organiser[4]}}</p>
-        </div>
-        {% endfor %}
-    </div>
 {% endblock %}

@@ -14,9 +14,9 @@ cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY NOT NUL
 cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY NOT NULL, review TEXT NOT NULL, author TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_in_sessions (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, activity_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id INTEGER PRIMARY KEY NOT NULL, activity_name)")
@@ -35,7 +35,7 @@ def getSessions(): #Query our table to retrieve all of our products
     data = "sessions.id, sessions.name, sessions.description, sessions.date, leads.forname, sessions.location, sessions.spaces_taken, sessions.capacity, sessions.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM sessions JOIN leads ON sessions.lead_id = lead.id")
+        cursor.execute(f"SELECT {data} FROM sessions JOIN leads ON sessions.lead_id = leads.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -43,19 +43,6 @@ def getSessions(): #Query our table to retrieve all of our products
     finally: #finally will always run after both a try and except. In other words: no matter if successful or not, this code will run.
         cursor.close()
         return sessions
-
-def getBookings():
-    try:
-        quote = "SELECT * FROM bookings WHERE user_id = ?"
-        cursor = connection.cursor()
-        cursor.execute((quote), (user.id,))
-        bookings = cursor.fetchall()
-    except sqlite3.error as error:
-        flash('Database error', error)
-    finally:
-        cursor.close
-    
-    return bookings
 
 def getSessionsForBookings(): #Query our table to retrieve all of our products
     data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
@@ -73,7 +60,7 @@ def getSessionsForBookings(): #Query our table to retrieve all of our products
 def getActivities(session_id): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT id, activity FROM activity WHERE session_id = {session_id[0]}")
+        cursor.execute(f"SELECT id, activity FROM activity WHERE session_id = {session_id}")
         activities = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -85,7 +72,7 @@ def getActivities(session_id): #Query our table to retrieve all of our products
 def getTimeslots(session_id): #Query our table to retrieve all of our products
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT id, timeslot_start, timeslot_end FROM timeslot WHERE session_id = {session_id[0]}")
+        cursor.execute(f"SELECT id, timeslot_start, timeslot_end FROM timeslot WHERE session_id = {session_id}")
         timeslots = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -97,7 +84,7 @@ def getTimeslots(session_id): #Query our table to retrieve all of our products
 def getReviews(): #Query our table to retrieve all of our reviews
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, review, author FROM review")
+        cursor.execute("SELECT id, review, author FROM reviews")
         reviews = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -109,7 +96,7 @@ def getReviews(): #Query our table to retrieve all of our reviews
 def getLeads(): #Query our table to retrieve all of our leads
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, photo, forname, surname, quote FROM leads")
+        cursor.execute("SELECT id, photo, forname, surname, quote, email FROM leads")
         leads = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -117,18 +104,6 @@ def getLeads(): #Query our table to retrieve all of our leads
         cursor.close()
     
     return leads
-
-def getOrganisers(): #Query our table to retrieve all of our organisers
-    try:
-        cursor = connection.cursor()
-        cursor.execute("SELECT id, photo, forname, surname, quote FROM organiser")
-        organisers = cursor.fetchall()
-    except sqlite3.Error as error:
-        print("Database error:", error)
-    finally:
-        cursor.close()
-    
-    return organisers
 
 class User(UserMixin):
     def __init__(self, id, forname, surname, email, password, access):
@@ -159,8 +134,7 @@ def home():
 @app.route('/about')
 def about():
     leads = getLeads()
-    organisers = getOrganisers()
-    return render_template('about.html', leads = leads, organisers = organisers)
+    return render_template('about.html', leads = leads  )
 
 @app.route('/sessions')
 def sessions():
@@ -302,7 +276,8 @@ def review():
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    leads = getLeads()
+    return render_template('contact.html', leads = leads)
 
 @app.route('/sign-in', methods=['GET', 'POST'])
 def signin():
@@ -324,7 +299,7 @@ def signin():
         if user: #if username is found          
             #Check if password entered on login page matches DB password against that username.
             if check_password_hash(user[4], password): #[4] is the password field.
-                login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
+                login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
                 flash('Logged in successfully.')
                 return redirect(url_for('user')) #Redirect to the user panel on correct credentials
             else: #incorrect password
@@ -386,7 +361,7 @@ def signup():
             cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
             user = cursor.fetchone()
             cursor.close
-            login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4]))
+            login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
             return redirect(url_for('user')) #Successful signup - move to user panel
     else:
         return render_template('sign-up.html')
@@ -400,8 +375,18 @@ def signout():
 @app.route('/user')
 @login_required
 def user():
-    bookings = getBookings
-    return render_template('user-panel.html', bookings = bookings)
+    try:
+        quote = "SELECT * FROM bookings WHERE user_id = ?"
+        cursor = connection.cursor()
+        cursor.execute((quote), (user[0],))
+        bookings = cursor.fetchall()
+        cursor.close()
+        if bookings:
+            return render_template('user-panel.html', bookings = bookings)
+    except sqlite3.Error as error:
+        flash('Database error', error)
+    finally:
+        return render_template('user-panel.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required

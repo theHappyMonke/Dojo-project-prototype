@@ -12,7 +12,7 @@ DROP TABLE user;
 INSERT INTO reviews VALUES (NULL, 'This is a quote about the company', 'author');
 INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Steve', 'John', 'sj@example.com', 'This is a quote about me');
 INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Albert', 'Stef', 'AS@example.com', 'This is a quote about me');
-INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Lee', 'Botting', 'Lee@example.com', 'I am Lee :)');
+INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Lee', 'Botting', '23bottingl849@collyers.ac.uk', 'I am Lee :)');
 INSERT INTO activities_for_sessions VALUES (NULL, 'Run');
 INSERT INTO activities_for_sessions VALUES (NULL, 'Jump');
 INSERT INTO activities_for_sessions VALUES (NULL, 'Skip');
@@ -21,4 +21,4 @@ INSERT INTO activities_in_sessions VALUES (NULL, 1, 2);
 INSERT INTO activities_in_sessions VALUES (NULL, 1, 3);
 INSERT INTO timeslot VALUES (NULL, 1, '00:00', '12:00');
 
-UPDATE user SET access = "admin" WHERE id = 1
+UPDATE users SET access = "admin" WHERE id = 1
