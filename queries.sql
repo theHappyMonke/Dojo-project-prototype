@@ -27,3 +27,5 @@ INSERT INTO access_rights VALUES (NULL, 'lead', 0);
 INSERT INTO access_rights VALUES (NULL, 'admin', 0);
 
 UPDATE users SET access = 4 WHERE id = 1
+UPDATE access_rights SET quantity = 0 WHERE id = 1;
+UPDATE access_rights SET quantity = 1 WHERE id = 4;
