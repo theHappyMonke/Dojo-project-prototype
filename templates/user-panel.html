@@ -13,7 +13,7 @@
         </div>
         <div class="two-column-content">
             <p>hi</p>
-            {% if current_user.access=="admin" %}
+            {% if current_user.access==4 %}
             <a href="{{ url_for('admin') }}">Access admin panel</a>
             {% endif %}
         </div>

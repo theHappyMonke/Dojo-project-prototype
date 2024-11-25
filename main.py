@@ -11,15 +11,16 @@ connection = sqlite3.connect('dojobase.db', check_same_thread=False)
 
 cursor = connection.cursor() #Cursor is a control structure used to traverse and fetch records from the database. Cursor has the ability to store multiple rows returned from a query.
 cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, card_holder TEXT NOT NULL, PAN TEXT NOT NULL, expiry_date TEXT NOT NULL, service_code TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY NOT NULL, review TEXT NOT NULL, author TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS access_rights (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, quantity INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_in_sessions (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, activity_id INTEGER NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id INTEGER PRIMARY KEY NOT NULL, activity_name)")
+cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id INTEGER PRIMARY KEY NOT NULL, activity_name TEXT NOT NULL)")
 cursor.close()
 
 #Create an instance of the Flask class
@@ -104,6 +105,15 @@ def getLeads(): #Query our table to retrieve all of our leads
         cursor.close()
     
     return leads
+
+def getAccess():
+    try:
+        cursor = connection.cursor()
+        cursor.esxecute("SELECT * FROM access_rights")
+    except:
+        print("none")
+    
+    return
 
 class User(UserMixin):
     def __init__(self, id, forname, surname, email, password, access):
@@ -341,10 +351,13 @@ def signup():
                     flash('Password must be at least 8 characters')
                     return render_template('sign-up.html')
                 elif password == confirm_password:
-                    query = "INSERT INTO users (forname, surname, email, password, access) VALUES (?, ?, ?, ?, 'none')"
-                    insert_data = (forname, surname, email, generate_password_hash(password),) #Create a tuple with all the data we want to INSERT.
                     cursor = connection.cursor()
+                    cursor.execute("SELECT quantity, id FROM access_rights WHERE name = user")
+                    access = cursor.fetchone()
+                    query = "INSERT INTO users (forname, surname, email, password, access) VALUES (?, ?, ?, ?, ?)"
+                    insert_data = (forname, surname, email, generate_password_hash(password), access[1],) #Create a tuple with all the data we want to INSERT.
                     cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
+                    cursor.execute("UPDATE access_rights SET quantity = ? WHERE id = ?" ((access[0] + 1), access[1],))
                     connection.commit() #This is necessary to permanently make the change to our DB, the change will not persist without it.
                 else:
                     flash('Unknown error')

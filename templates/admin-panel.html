@@ -7,7 +7,7 @@
         <h1>Admin panel</h1>
         <hr>
     </div>
-    {% if current_user.access == 'admin' %}
+    {% if current_user.access == 4 %}
     <div class="one-column-grid">
         <div class="one-column-content">
             {% for user in users %}
