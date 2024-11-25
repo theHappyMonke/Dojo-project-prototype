@@ -109,11 +109,14 @@ def getLeads(): #Query our table to retrieve all of our leads
 def getAccess():
     try:
         cursor = connection.cursor()
-        cursor.esxecute("SELECT * FROM access_rights")
-    except:
-        print("none")
+        cursor.execute("SELECT * FROM access_rights")
+        access = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
     
-    return
+    return access
 
 class User(UserMixin):
     def __init__(self, id, forename, surname, email, password, access):
@@ -412,7 +415,8 @@ def admin():
         elif form_id == 'remove':
             print()
     else:
-        return render_template('admin-panel.html')
+        access = getAccess()
+        return render_template('admin-panel.html', access = access)
 
 @app.errorhandler(404)
 def page_not_found(error):

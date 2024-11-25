@@ -8,10 +8,13 @@
         <hr>
     </div>
     {% if current_user.access == 4 %}
-    <div class="one-column-grid">
-        <div class="one-column-content">
-            {% for user in users %}
-            {% endfor %}
+    <div class="content">
+        <div class="upcoming-events">
+            <ul>
+                {% for access in access %}
+                <li class="event-item"><strong>Name</strong> - {{access[1]}}<br><strong>Quantity</strong> - {{access[2]}}</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
     {% else %}
