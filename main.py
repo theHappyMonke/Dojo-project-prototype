@@ -11,11 +11,11 @@ connection = sqlite3.connect('dojobase.db', check_same_thread=False)
 
 cursor = connection.cursor() #Cursor is a control structure used to traverse and fetch records from the database. Cursor has the ability to store multiple rows returned from a query.
 cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, card_holder TEXT NOT NULL, PAN TEXT NOT NULL, expiry_date TEXT NOT NULL, service_code TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access INTEGER NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access INTEGER NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY NOT NULL, review TEXT NOT NULL, author TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forname TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS access_rights (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, quantity INTEGER NOT NULL)")
@@ -33,7 +33,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'signin'
 
 def getSessions(): #Query our table to retrieve all of our products
-    data = "sessions.id, sessions.name, sessions.description, sessions.date, leads.forname, sessions.location, sessions.spaces_taken, sessions.capacity, sessions.price"
+    data = "sessions.id, sessions.name, sessions.description, sessions.date, leads.forename, sessions.location, sessions.spaces_taken, sessions.capacity, sessions.price"
     try:
         cursor = connection.cursor()
         cursor.execute(f"SELECT {data} FROM sessions JOIN leads ON sessions.lead_id = leads.id")
@@ -46,7 +46,7 @@ def getSessions(): #Query our table to retrieve all of our products
         return sessions
 
 def getSessionsForBookings(): #Query our table to retrieve all of our products
-    data = "session.id, session.name, session.description, session.date, leads.forname, session.location, session.spaces_taken, session.capacity, session.price"
+    data = "session.id, session.name, session.description, session.date, leads.forename, session.location, session.spaces_taken, session.capacity, session.price"
     try:
         cursor = connection.cursor()
         cursor.execute(f"SELECT {data} FROM session JOIN leads ON session.lead_id = leads.id")
@@ -97,7 +97,7 @@ def getReviews(): #Query our table to retrieve all of our reviews
 def getLeads(): #Query our table to retrieve all of our leads
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT id, photo, forname, surname, quote, email FROM leads")
+        cursor.execute("SELECT id, photo, forename, surname, quote, email FROM leads")
         leads = cursor.fetchall()
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -116,9 +116,9 @@ def getAccess():
     return
 
 class User(UserMixin):
-    def __init__(self, id, forname, surname, email, password, access):
+    def __init__(self, id, forename, surname, email, password, access):
         self.id = id
-        self.forname = forname
+        self.forename = forename
         self.surname = surname
         self.email = email
         self.password = password
@@ -131,7 +131,7 @@ def load_user(user_id):
     user = cursor.fetchone()
     cursor.close()
     if user:
-        return User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5])
+        return User(id=user[0], forename=user[1], surname=user[2], email=user[3], password=user[4], access=user[5])
     return None
 
 #Create a route decorator to tell Flask what URL should trigger our function
@@ -309,7 +309,7 @@ def signin():
         if user: #if username is found          
             #Check if password entered on login page matches DB password against that username.
             if check_password_hash(user[4], password): #[4] is the password field.
-                login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
+                login_user(User(id=user[0], forename=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
                 flash('Logged in successfully.')
                 return redirect(url_for('user')) #Redirect to the user panel on correct credentials
             else: #incorrect password
@@ -324,7 +324,7 @@ def signin():
 @app.route('/sign-up', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        forname = request.form['forname']
+        forename = request.form['forename']
         surname = request.form['surname']
         email = request.form['email']
         password = request.form['password']
@@ -354,10 +354,11 @@ def signup():
                     cursor = connection.cursor()
                     cursor.execute("SELECT quantity, id FROM access_rights WHERE name = user")
                     access = cursor.fetchone()
-                    query = "INSERT INTO users (forname, surname, email, password, access) VALUES (?, ?, ?, ?, ?)"
-                    insert_data = (forname, surname, email, generate_password_hash(password), access[1],) #Create a tuple with all the data we want to INSERT.
+                    new_user = access[0] + 1
+                    query = "INSERT INTO users (forename, surname, email, password, access) VALUES (?, ?, ?, ?, ?)"
+                    insert_data = (forename, surname, email, generate_password_hash(password), access[1],) #Create a tuple with all the data we want to INSERT.
                     cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
-                    cursor.execute("UPDATE access_rights SET quantity = ? WHERE id = ?" ((access[0] + 1), access[1],))
+                    cursor.execute("UPDATE access_rights SET quantity = ? WHERE id = ?", (new_user, access[1],))
                     connection.commit() #This is necessary to permanently make the change to our DB, the change will not persist without it.
                 else:
                     flash('Unknown error')
@@ -374,7 +375,7 @@ def signup():
             cursor.execute(f"SELECT * FROM users WHERE email='{email}'")
             user = cursor.fetchone()
             cursor.close
-            login_user(User(id=user[0], forname=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
+            login_user(User(id=user[0], forename=user[1], surname=user[2], email=user[3], password=user[4], access=user[5]))
             return redirect(url_for('user')) #Successful signup - move to user panel
     else:
         return render_template('sign-up.html')
