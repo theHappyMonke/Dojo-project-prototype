@@ -14,7 +14,7 @@
         <div class="upcoming-events">
             <ul>
                 {% for access in access %}
-                <li class="event-item" onclick="changeClass('{{access[1]}}')" >Name - {{access[1]}} <br> Quantity - {{access[2]}} <br> <div id="{{access[1]}}" style="display: none;">hello world</div> <br> <p id="expand{{access[1]}}">Click box to expand</p></li>
+                <li class="event-item" onclick="changeClass('{{access[1]}}')" >Name - {{access[1]}} <br> Quantity - {{access[2]}} <br> <hr> <div id="{{access[1]}}" style="display: none;">hello world</div> <br> <p id="expand{{access[1]}}">Click box to expand</p></li>
                 {% endfor %}
             </ul>
         </div>
@@ -25,22 +25,4 @@
         <a href="{{ url_for('home') }}">Return to the home page</a>
     </div>
     {% endif %}
-
-    <script>
-        function changeClass(name) {
-            var element = document.querySelector("#" + name);
-            if (element.style.display === "none") {
-                element.style.display = "block";
-            } else {
-                element.style.display = "none";
-            }
-
-            var span = document.getElementById('expand' + name);
-            if (span.innerHTML === "Click box to expand") {
-                document.getElementById('expand' + name).innerHTML = "Click box to collapse";
-            } else {
-                document.getElementById('expand' + name).innerHTML = "Click box to expand";
-            }
-        }
-    </script>
 {% endblock %}

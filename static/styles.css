@@ -26,6 +26,12 @@ footer {
     border-color: #d9d9d9;
 }
 
+hr {
+    background-color: #dfe0e2;
+    height: 3px;
+    border: none;
+}
+
 /*
     This makes it so that any a tags are not underlined.
 */
@@ -149,12 +155,6 @@ form > input[type="reset"]:hover {
     margin: 0 auto;
     margin-left: 10%;
     padding: 2em;
-}
-
-.content > hr {
-    background-color: #dfe0e2;
-    height: 3px;
-    border: none;
 }
 
 .content a {
