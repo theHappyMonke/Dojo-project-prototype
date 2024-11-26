@@ -8,9 +8,7 @@
     <div class="content">
         <h1>Admin panel</h1>
         <hr>
-    </div>
     {% if current_user.access == 4 %}
-    <div class="content">
         <div class="upcoming-events">
             <ul>
                 {% for access in access %}
@@ -19,7 +17,22 @@
                     <p>Quantity - {{access[2]}}</p>
                     <hr>
                     <div id="{{access[1]}}" style="display: none;">
-                        hello world
+                        <p>Users with access:</p>
+                        {% set users_with_access = [] %}
+                        {% for user in users %}
+                            {% if user[3] == access[1] %}
+                                {% set users_with_access = users_with_access + [user] %}
+                            {% endif %}
+                        <p>{{users_with_access}}</p>
+                        {% endfor %}
+                        {% if users_with_access|length > 0 %}
+                            {% for user in users_with_access %}
+                                <p>{{user[1]}} {{user[2]}}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p>There are no users with this access.</p>
+                        {% endif %}
+                        <a href="#">Add</a>
                     </div>
                     <br>
                     <h3 id="expand{{access[1]}}">Click box to expand</h3>
@@ -29,7 +42,6 @@
         </div>
     </div>
     {% else %}
-    <div class="content">
         <p>You do not have access to this page.</p>
         <a href="{{ url_for('home') }}">Return to the home page</a>
     </div>
