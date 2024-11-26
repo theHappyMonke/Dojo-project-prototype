@@ -299,12 +299,17 @@ form > input[type="reset"]:hover {
     background-color: #eeeff0; /* Light grey background */
     border-left: 5px solid #001427; /* Colorful left border */
     border-radius: 4px;
+    font-size: large;
     font-weight: bold; /* Bold text for emphasis */
     transition: transform 0.2s;
 }
 
 .event-item:hover {
     transform: scale(1.02); /* Slightly enlarge on hover */
+}
+
+.event-item strong {
+    size-adjust: 120%;
 }
 /* End of Classes */
 

@@ -14,7 +14,16 @@
         <div class="upcoming-events">
             <ul>
                 {% for access in access %}
-                <li class="event-item" onclick="changeClass('{{access[1]}}')" >Name - {{access[1]}} <br> Quantity - {{access[2]}} <br> <hr> <div id="{{access[1]}}" style="display: none;">hello world</div> <br> <p id="expand{{access[1]}}">Click box to expand</p></li>
+                <li class="event-item" onclick="changeClass('{{access[1]}}')" >
+                    <p><strong>Name</strong> - {{access[1]}}</p>
+                    <p>Quantity - {{access[2]}}</p>
+                    <hr>
+                    <div id="{{access[1]}}" style="display: none;">
+                        hello world
+                    </div>
+                    <br>
+                    <h3 id="expand{{access[1]}}">Click box to expand</h3>
+                </li>
                 {% endfor %}
             </ul>
         </div>
