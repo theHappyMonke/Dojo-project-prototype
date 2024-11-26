@@ -2,6 +2,8 @@
 
 {% block title %}Admin panel{% endblock %}
 
+{% set interaction = closed %}
+
 {% block content %}
     <div class="content">
         <h1>Admin panel</h1>
@@ -12,7 +14,7 @@
         <div class="upcoming-events">
             <ul>
                 {% for access in access %}
-                <li class="event-item"><strong>Name</strong> - {{access[1]}}<br><strong>Quantity</strong> - {{access[2]}}</li>
+                <li class="event-item" onclick="changeClass({access[1]})" >Name - {{access[1]}} <br> Quantity - {{access[2]}} <br> <p id="{{access[1]}}">hello world</p></li>
                 {% endfor %}
             </ul>
         </div>
@@ -23,4 +25,15 @@
         <a href="{{ url_for('home') }}">Return to the home page</a>
     </div>
     {% endif %}
+
+    <script>
+        function changeClass(name) {
+            var element = document.querySelector("#" + name);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+    </script>
 {% endblock %}

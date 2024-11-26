@@ -325,4 +325,12 @@ form > input[type="reset"]:hover {
     color: #dfe0e2;
 }
 
+
+.none{
+    color: red;
+}
+
+.display{
+    color: black;
+}
 /* End of Ids */
