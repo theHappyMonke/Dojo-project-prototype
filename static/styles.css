@@ -307,10 +307,6 @@ form > input[type="reset"]:hover {
 .event-item:hover {
     transform: scale(1.02); /* Slightly enlarge on hover */
 }
-
-.event-item strong {
-    size-adjust: 120%;
-}
 /* End of Classes */
 
 /* Ids */
