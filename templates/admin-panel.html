@@ -21,13 +21,16 @@
                         {% set users_with_access = [] %}
                         {% for user in users %}
                             {% if user[3] == access[1] %}
-                                {% set users_with_access = users_with_access + [user] %}
+                                {% set users_with_access = users_with_access.append(user) %}
                             {% endif %}
-                        <p>{{users_with_access}}</p>
                         {% endfor %}
                         {% if users_with_access|length > 0 %}
                             {% for user in users_with_access %}
-                                <p>{{user[1]}} {{user[2]}}</p>
+                                {% if user[0] == current_user.id %}
+                                    <p>{{user[1]}} {{user[2]}} (You)</p>
+                                {% else %}
+                                    <p>{{user[1]}} {{user[2]}}</p>
+                                {% endif %}
                             {% endfor %}
                         {% else %}
                             <p>There are no users with this access.</p>
