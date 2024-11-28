@@ -27,15 +27,15 @@
                         {% if users_with_access|length > 0 %}
                             {% for user in users_with_access %}
                                 {% if user[0] == current_user.id %}
-                                    <p>{{user[1]}} {{user[2]}} (You)</p>
+                                    <p>{{ user[1] }} {{ user[2] }} (You)</p>
                                 {% else %}
-                                    <p>{{user[1]}} {{user[2]}}</p>
+                                    <p>{{ user[1] }} {{ user[2] }}</p>
                                 {% endif %}
                             {% endfor %}
                         {% else %}
                             <p>There are no users with this access.</p>
                         {% endif %}
-                        <a href="#">Add</a>
+                        
                     </div>
                     <br>
                     <h3 id="expand{{access[1]}}">Click box to expand</h3>
