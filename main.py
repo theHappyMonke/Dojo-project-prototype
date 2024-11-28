@@ -128,7 +128,6 @@ def getUsers():
     finally:
         cursor.close()
     
-    print(users)
     return users
 
 class User(UserMixin):
@@ -418,19 +417,12 @@ def user():
     finally:
         return render_template('user-panel.html')
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin')
 @login_required
 def admin():
-    if request.method == 'POST':
-        form_id = request.form['form_id']
-        if form_id == 'add':
-            user_id = request.form['user_id']
-        elif form_id == 'remove':
-            print()
-    else:
-        access = getAccess()
-        users = getUsers()
-        return render_template('admin-panel.html', access = access, users = users)
+    access = getAccess()
+    users = getUsers()
+    return render_template('admin-panel.html', access = access, users = users)
 
 @app.errorhandler(404)
 def page_not_found(error):

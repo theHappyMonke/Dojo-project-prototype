@@ -1,0 +1,12 @@
+<br>
+                                <h3>Move user</h3>
+                                <form>
+                                    <input type="hidden" name="access" id="access" placeholder="{{access[0]}}">
+                                    <label for="user_id">Select user:</label><br>
+                                    <select name="user_id">
+                                        {% for user in users_with_access %}
+                                            <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
+                                        {% endfor %}
+                                    </select><br><br>
+
+                                <input type="submit" value="Add user">
