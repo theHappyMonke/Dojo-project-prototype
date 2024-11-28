@@ -118,6 +118,19 @@ def getAccess():
     
     return access
 
+def getUsers():
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT users.id, users.forename, users.surname, access_rights.name FROM users JOIN access_rights ON users.access = access_rights.id")
+        users = cursor.fetchall()
+    except sqlite3.Error as error:
+        print("Database error:", error)
+    finally:
+        cursor.close()
+    
+    print(users)
+    return users
+
 class User(UserMixin):
     def __init__(self, id, forename, surname, email, password, access):
         self.id = id
@@ -416,7 +429,8 @@ def admin():
             print()
     else:
         access = getAccess()
-        return render_template('admin-panel.html', access = access)
+        users = getUsers()
+        return render_template('admin-panel.html', access = access, users = users)
 
 @app.errorhandler(404)
 def page_not_found(error):

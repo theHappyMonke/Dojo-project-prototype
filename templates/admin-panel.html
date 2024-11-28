@@ -2,23 +2,49 @@
 
 {% block title %}Admin panel{% endblock %}
 
+{% set interaction = closed %}
+
 {% block content %}
     <div class="content">
         <h1>Admin panel</h1>
         <hr>
-    </div>
     {% if current_user.access == 4 %}
-    <div class="content">
         <div class="upcoming-events">
             <ul>
                 {% for access in access %}
-                <li class="event-item"><strong>Name</strong> - {{access[1]}}<br><strong>Quantity</strong> - {{access[2]}}</li>
+                <li class="event-item" onclick="changeClass('{{access[1]}}')" >
+                    <p>Name - {{access[1]}}</p>
+                    <p>Quantity - {{access[2]}}</p>
+                    <hr>
+                    <div id="{{access[1]}}" style="display: none;">
+                        <p>Users with access:</p>
+                        {% set users_with_access = [] %}
+                        {% for user in users %}
+                            {% if user[3] == access[1] %}
+                                {% set users_with_access = users_with_access.append(user) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if users_with_access|length > 0 %}
+                            {% for user in users_with_access %}
+                                {% if user[0] == current_user.id %}
+                                    <p>{{user[1]}} {{user[2]}} (You)</p>
+                                {% else %}
+                                    <p>{{user[1]}} {{user[2]}}</p>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p>There are no users with this access.</p>
+                        {% endif %}
+                        <a href="#">Add</a>
+                    </div>
+                    <br>
+                    <h3 id="expand{{access[1]}}">Click box to expand</h3>
+                </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
     {% else %}
-    <div class="content">
         <p>You do not have access to this page.</p>
         <a href="{{ url_for('home') }}">Return to the home page</a>
     </div>

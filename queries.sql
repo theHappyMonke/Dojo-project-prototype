@@ -11,9 +11,9 @@ DROP TABLE users;
 DROP TABLE access_rights;
 
 INSERT INTO reviews VALUES (NULL, 'This is a quote about the company', 'author');
-INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Steve', 'John', 'sj@example.com', 'This is a quote about me');
-INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Albert', 'Stef', 'AS@example.com', 'This is a quote about me');
-INSERT INTO leads VALUES (NULL, '/static/employee_photos/logo.png', 'Lee', 'Botting', '23bottingl849@collyers.ac.uk', 'I am Lee :)');
+INSERT INTO leads VALUES (NULL, '{{ url_for('static', filename='employee_photos/logo.png') }}', 'Steve', 'John', 'sj@example.com', 'This is a quote about me');
+INSERT INTO leads VALUES (NULL, '{{ url_for('static', filename='employee_photos/logo.png') }}', 'Albert', 'Stef', 'AS@example.com', 'This is a quote about me');
+INSERT INTO leads VALUES (NULL, '{{ url_for('static', filename='employee_photos/logo.png') }}', 'Lee', 'Botting', '23bottingl849@collyers.ac.uk', 'I am Lee :)');
 INSERT INTO activities_for_sessions VALUES (NULL, 'Run');
 INSERT INTO activities_for_sessions VALUES (NULL, 'Jump');
 INSERT INTO activities_for_sessions VALUES (NULL, 'Skip');
