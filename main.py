@@ -18,7 +18,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT N
 cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, date TEXT NOT NULL, location TEXT NOT NULL, spaces_taken INTEGER NOT NULL, capacity INTEGER NOT NULL, lead_id INTEGER NOT NULL, organiser_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS timeslot (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, timeslot_start TEXT NOT NULL, timeslot_end TEXT NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS access_rights (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, quantity INTEGER NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS access_rights (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_in_sessions (id INTEGER PRIMARY KEY NOT NULL, session_id INTEGER NOT NULL, activity_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS activities_for_sessions (id INTEGER PRIMARY KEY NOT NULL, activity_name TEXT NOT NULL)")
 cursor.close()
@@ -420,10 +420,7 @@ def user():
 @app.route('/admin', methods = ['GET', 'POST'])
 @login_required
 def admin():
-    access = getAccess()
-    users = getUsers()
     if request.method == 'POST':
-        access_id_from = request.form['access_id_from']
         access_id_to = request.form['access_id_to']
         user_id = request.form['user_id']
         try:
@@ -431,24 +428,18 @@ def admin():
             cursor = connection.cursor()
             cursor.execute(query, (access_id_to, user_id))
             query = "UPDATE access_rights SET quantity = ? WHERE id = ?"
-            cursor.execute("SELECT quantity FROM access_rights WHERE id = ?", (access_id_from,))
-            quantity = cursor.fetchone()[0]
-            new_quantity = new_quantity - 1
-            cursor.execute(query, (new_quantity, access_id_from,))
-            query = "UPDATE access_rights SET quantity = ? WHERE id = ?"
-            cursor.execute("SELECT quantity FROM access_rights WHERE id = ?", (access_id_to,))
-            quantity = cursor.fetchone()[0]
-            new_quantity = quantity + 1
-            cursor.execute(query, (new_quantity, access_id_from,))
             connection.commit()
         except sqlite3.Error as error:
             print("Database error:", error)
             flash('Database error')
         finally:
             cursor.close()
+            access = getAccess()
+            users = getUsers()
             return render_template('admin-panel.html', accesss = access, users = users)
     else:
-        
+        access = getAccess()
+        users = getUsers()
         return render_template('admin-panel.html', accesss = access, users = users)
 
 @app.errorhandler(404)

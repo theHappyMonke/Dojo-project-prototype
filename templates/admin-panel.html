@@ -12,20 +12,27 @@
             <div class="upcoming-events">
                 <ul>
                     {% for access in accesss %}
-                        <li class="event-item" onclick="changeClass('{{access[1]}}')">
-                            <p>Name - {{access[1]}}</p>
-                            <p>Quantity - {{access[2]}}</p>
-                            <hr>
-                            <br>
-                            <h3 id="expand{{access[1]}}">Click box to expand</h3>
-                        <div id="{{access[1]}}" style="display: none;">
-                            <p>Users with access:</p>
-                            {% set users_with_access = [] %}
+                        {% set users_with_access = [] %}
                             {% for user in users %}
                                 {% if user[3] == access[1] %}
                                     {% set users_with_access = users_with_access.append(user) %}
                                 {% endif %}
                             {% endfor %}
+                        <li class="event-item" onclick="changeClass('{{access[1]}}')">
+                            <p>Name - {{access[1]}}</p>
+                            
+                            {% if users_with_access|length > 0 %}
+                            {% set length = users_with_access|length %}
+                            <p>Quantity - {{length}}</p>
+                            {% else %}
+                            <p>Quantity - 0</p>
+                            {% endif %}
+                            <hr>
+                            <br>
+                            <h3 id="expand{{access[1]}}">Click box to expand</h3>
+                        </li>
+                        <div id="{{access[1]}}" style="display: none;">
+                            <h3>Users with access:</h3>
                             {% if users_with_access|length > 0 %}
                                 {% for user in users_with_access %}
                                     {% if user[0] == current_user.id %}
@@ -37,16 +44,16 @@
                             {% else %}
                                 <p>There are no users with this access.</p>
                             {% endif %}
+                            <br>
                             <h3>Move user</h3>
                             <form action="{{ url_for('admin')}}" method="post" id="move_user" autocomplete="off">
                                 <label for="user_id">Select user:</label><br>
                                 <select name="user_id">
-                                    {% for user in users %}
+                                    {% for user in users_with_access %}
                                         <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
                                     {% endfor %}
                                 </select><br><br>
-                                <label for="access_id_from">Move from: {{ access[1] }}</label><br>
-                                <input type="hidden" name="access_id_from" value="{{ access[0] }}">
+                                <label for="access_id_from">Move from: {{ access[1] }}</label><br><br>
                                 <label for="access_id_to">Move to:</label><br>
                                 <select name="access_id_to">
                                     {% for access in accesss %}
@@ -56,7 +63,6 @@
                                 <input type="submit" value="Move user">
                             </form>
                         </div>
-                        </li>
                         
                     {% endfor %}
                 </ul>

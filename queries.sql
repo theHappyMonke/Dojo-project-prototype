@@ -21,11 +21,10 @@ INSERT INTO activities_in_sessions VALUES (NULL, 1, 1);
 INSERT INTO activities_in_sessions VALUES (NULL, 1, 2);
 INSERT INTO activities_in_sessions VALUES (NULL, 1, 3);
 INSERT INTO timeslot VALUES (NULL, 1, '00:00', '12:00');
-INSERT INTO access_rights VALUES (NULL, 'user', 0);
-INSERT INTO access_rights VALUES (NULL, 'organiser', 0);
-INSERT INTO access_rights VALUES (NULL, 'lead', 0);
-INSERT INTO access_rights VALUES (NULL, 'admin', 0);
+INSERT INTO access_rights VALUES (NULL, 'user');
+INSERT INTO access_rights VALUES (NULL, 'organiser');
+INSERT INTO access_rights VALUES (NULL, 'lead');
+INSERT INTO access_rights VALUES (NULL, 'admin');
 
 UPDATE users SET access = 4 WHERE id = 1;
-UPDATE access_rights SET quantity = 0 WHERE id = 1;
-UPDATE access_rights SET quantity = 1 WHERE id = 4;
+UPDATE users SET access = 1 WHERE id = 2;
