@@ -12,7 +12,7 @@ connection = sqlite3.connect('dojobase.db', check_same_thread=False)
 cursor = connection.cursor() #Cursor is a control structure used to traverse and fetch records from the database. Cursor has the ability to store multiple rows returned from a query.
 cursor.execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, card_holder TEXT NOT NULL, PAN TEXT NOT NULL, expiry_date TEXT NOT NULL, service_code TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, access INTEGER NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY NOT NULL, photo URL NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, email TEXT NOT NULL, quote TEXT NOT NULL, user_id INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY NOT NULL, review TEXT NOT NULL, author TEXT NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY NOT NULL, user_id INTEGER NOT NULL, session_id INTEGER NOT NULL, order_total INTEGER NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS contact (id INTEGER PRIMARY KEY NOT NULL, forename TEXT NOT NULL, surname TEXT NOT NULL, authority TEXT NOT NULL, message TEXT NOT NULL)")
@@ -170,10 +170,7 @@ def sessions():
 @login_required
 def setup():
     if request.method == 'POST':
-        query_for_session = """
-            INSERT INTO session (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """
+        query_for_session = "INSERT INTO sessions (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         name = request.form['name']
         description = request.form['description']
         date = request.form['date']
@@ -183,17 +180,12 @@ def setup():
         capacity = request.form['capacity']
         spaces_taken = 0
         organiser_id = 1
-
-        query_input = (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id)
+        query_input = (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id, )
 
         try:
             cursor = connection.cursor()
             cursor.execute(query_for_session, (query_input))
             exists = cursor.fetchone()
-        except:
-            print("Database error:", error)
-            flash('Database error')
-        finally:
             if exists:
                 leads = getLeads()
                 flash('Session name already exists')
@@ -211,6 +203,13 @@ def setup():
                 finally:
                     cursor.close()
                     return render_template('setup-activity.html', session = name)
+        except sqlite3.Error as error:
+            print("Database error:", error)
+            flash('Database error')
+        finally:
+            cursor.close()
+            leads = getLeads()
+            return render_template('setup-session.html', leads = leads)
     else:
         leads = getLeads()
         return render_template('setup-session.html', leads = leads)

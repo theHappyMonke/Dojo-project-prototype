@@ -12,8 +12,14 @@
             <p>Welcome to your user panel {{current_user.forename}}</p>
         </div>
         <div class="two-column-content">
-            <p>hi</p>
-            {% if current_user.access==4 %}
+            {% if current_user.access==1 %}
+            <a href="{{ url_for('user') }}">Access user panel</a>
+            {% elif current_user.access==2 %}
+            <a href="{{ url_for('setup') }}">Access session creation panel</a>
+            {% elif current_user.access==3 %}
+            <p>your current photo:</p>
+            <p>Your current quote:</p>
+            {% elif current_user.access==4 %}
             <a href="{{ url_for('admin') }}">Access admin panel</a>
             {% endif %}
         </div>
