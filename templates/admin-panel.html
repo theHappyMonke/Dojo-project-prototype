@@ -41,27 +41,27 @@
                                         <p>{{ user[1] }} {{ user[2] }}</p>
                                     {% endif %}
                                 {% endfor %}
+                                <br>
+                                <h3>Move user</h3>
+                                <form action="{{ url_for('admin')}}" method="post" id="move_user" autocomplete="off">
+                                    <label for="user_id">Select user:</label><br>
+                                    <select name="user_id">
+                                        {% for user in users_with_access %}
+                                            <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
+                                        {% endfor %}
+                                    </select><br><br>
+                                    <label for="access_id_from">Move from: {{ access[1] }}</label><br><br>
+                                    <label for="access_id_to">Move to:</label><br>
+                                    <select name="access_id_to">
+                                        {% for access in accesss %}
+                                            <option value="{{ access[0] }}">{{ access[1] }}</option>
+                                        {% endfor %}
+                                    </select><br><br>
+                                    <input type="submit" value="Move user">
+                                </form>
                             {% else %}
                                 <p>There are no users with this access.</p>
                             {% endif %}
-                            <br>
-                            <h3>Move user</h3>
-                            <form action="{{ url_for('admin')}}" method="post" id="move_user" autocomplete="off">
-                                <label for="user_id">Select user:</label><br>
-                                <select name="user_id">
-                                    {% for user in users_with_access %}
-                                        <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
-                                    {% endfor %}
-                                </select><br><br>
-                                <label for="access_id_from">Move from: {{ access[1] }}</label><br><br>
-                                <label for="access_id_to">Move to:</label><br>
-                                <select name="access_id_to">
-                                    {% for access in accesss %}
-                                        <option value="{{ access[0] }}">{{ access[1] }}</option>
-                                    {% endfor %}
-                                </select><br><br>
-                                <input type="submit" value="Move user">
-                            </form>
                         </div>
                         
                     {% endfor %}
