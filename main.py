@@ -417,12 +417,39 @@ def user():
     finally:
         return render_template('user-panel.html')
 
-@app.route('/admin')
+@app.route('/admin', methods = ['GET', 'POST'])
 @login_required
 def admin():
     access = getAccess()
     users = getUsers()
-    return render_template('admin-panel.html', access = access, users = users)
+    if request.method == 'POST':
+        access_id_from = request.form['access_id_from']
+        access_id_to = request.form['access_id_to']
+        user_id = request.form['user_id']
+        try:
+            query = "UPDATE users SET access = ? WHERE id = ?"
+            cursor = connection.cursor()
+            cursor.execute(query, (access_id_to, user_id))
+            query = "UPDATE access_rights SET quantity = ? WHERE id = ?"
+            cursor.execute("SELECT quantity FROM access_rights WHERE id = ?", (access_id_from,))
+            quantity = cursor.fetchone()[0]
+            new_quantity = new_quantity - 1
+            cursor.execute(query, (new_quantity, access_id_from,))
+            query = "UPDATE access_rights SET quantity = ? WHERE id = ?"
+            cursor.execute("SELECT quantity FROM access_rights WHERE id = ?", (access_id_to,))
+            quantity = cursor.fetchone()[0]
+            new_quantity = quantity + 1
+            cursor.execute(query, (new_quantity, access_id_from,))
+            connection.commit()
+        except sqlite3.Error as error:
+            print("Database error:", error)
+            flash('Database error')
+        finally:
+            cursor.close()
+            return render_template('admin-panel.html', accesss = access, users = users)
+    else:
+        
+        return render_template('admin-panel.html', accesss = access, users = users)
 
 @app.errorhandler(404)
 def page_not_found(error):

@@ -8,42 +8,60 @@
     <div class="content">
         <h1>Admin panel</h1>
         <hr>
-    {% if current_user.access == 4 %}
-        <div class="upcoming-events">
-            <ul>
-                {% for access in access %}
-                <li class="event-item" onclick="changeClass('{{access[1]}}')" >
-                    <p>Name - {{access[1]}}</p>
-                    <p>Quantity - {{access[2]}}</p>
-                    <hr>
-                    <div id="{{access[1]}}" style="display: none;">
-                        <p>Users with access:</p>
-                        {% set users_with_access = [] %}
-                        {% for user in users %}
-                            {% if user[3] == access[1] %}
-                                {% set users_with_access = users_with_access.append(user) %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if users_with_access|length > 0 %}
-                            {% for user in users_with_access %}
-                                {% if user[0] == current_user.id %}
-                                    <p>{{ user[1] }} {{ user[2] }} (You)</p>
-                                {% else %}
-                                    <p>{{ user[1] }} {{ user[2] }}</p>
+        {% if current_user.access == 4 %}
+            <div class="upcoming-events">
+                <ul>
+                    {% for access in accesss %}
+                        <li class="event-item" onclick="changeClass('{{access[1]}}')">
+                            <p>Name - {{access[1]}}</p>
+                            <p>Quantity - {{access[2]}}</p>
+                            <hr>
+                            <br>
+                            <h3 id="expand{{access[1]}}">Click box to expand</h3>
+                        <div id="{{access[1]}}" style="display: none;">
+                            <p>Users with access:</p>
+                            {% set users_with_access = [] %}
+                            {% for user in users %}
+                                {% if user[3] == access[1] %}
+                                    {% set users_with_access = users_with_access.append(user) %}
                                 {% endif %}
                             {% endfor %}
-                        {% else %}
-                            <p>There are no users with this access.</p>
-                        {% endif %}
+                            {% if users_with_access|length > 0 %}
+                                {% for user in users_with_access %}
+                                    {% if user[0] == current_user.id %}
+                                        <p>{{ user[1] }} {{ user[2] }} (You)</p>
+                                    {% else %}
+                                        <p>{{ user[1] }} {{ user[2] }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <p>There are no users with this access.</p>
+                            {% endif %}
+                            <h3>Move user</h3>
+                            <form action="{{ url_for('admin')}}" method="post" id="move_user" autocomplete="off">
+                                <label for="user_id">Select user:</label><br>
+                                <select name="user_id">
+                                    {% for user in users %}
+                                        <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
+                                    {% endfor %}
+                                </select><br><br>
+                                <label for="access_id_from">Move from: {{ access[1] }}</label><br>
+                                <input type="hidden" name="access_id_from" value="{{ access[0] }}">
+                                <label for="access_id_to">Move to:</label><br>
+                                <select name="access_id_to">
+                                    {% for access in accesss %}
+                                        <option value="{{ access[0] }}">{{ access[1] }}</option>
+                                    {% endfor %}
+                                </select><br><br>
+                                <input type="submit" value="Move user">
+                            </form>
+                        </div>
+                        </li>
                         
-                    </div>
-                    <br>
-                    <h3 id="expand{{access[1]}}">Click box to expand</h3>
-                </li>
-                {% endfor %}
-            </ul>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-    </div>
     {% else %}
         <p>You do not have access to this page.</p>
         <a href="{{ url_for('home') }}">Return to the home page</a>
