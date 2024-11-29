@@ -46,10 +46,9 @@ def getSessions(): #Query our table to retrieve all of our products
         return sessions
 
 def getSessionsForBookings(): #Query our table to retrieve all of our products
-    data = "session.id, session.name, session.description, session.date, leads.forename, session.location, session.spaces_taken, session.capacity, session.price"
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT {data} FROM session JOIN leads ON session.lead_id = leads.id")
+        cursor.execute("SELECT sessions.id, sessions.name, sessions.description, sessions.date, leads.forename, sessions.location, sessions.spaces_taken, sessions.capacity, sessions.price FROM sessions JOIN leads ON sessions.lead_id = leads.id")
         sessions = cursor.fetchall() #fetchone() vs fetchall() depending on the situation. We want all of the data here.
     except sqlite3.Error as error:
         print("Database error:", error)
@@ -184,7 +183,7 @@ def setup():
 
         try:
             cursor = connection.cursor()
-            cursor.execute(query_for_session, (query_input))
+            cursor.execute("SELECT name FROM sessions WHERE name = ?", (name,))
             exists = cursor.fetchone()
             if exists:
                 leads = getLeads()
@@ -193,7 +192,7 @@ def setup():
             else:
                 try:
                     cursor = connection.cursor()
-                    cursor.execute(query_for_session, (name, description, price, date, location, spaces_taken, capacity, lead_id, organiser_id))
+                    cursor.execute(query_for_session, (query_input))
                     connection.commit()
                 except sqlite3.Error as error:
                     print("Database error:", error)
