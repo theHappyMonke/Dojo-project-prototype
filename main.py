@@ -365,7 +365,7 @@ def signup():
                     return render_template('sign-up.html')
                 elif password == confirm_password:
                     cursor = connection.cursor()
-                    cursor.execute("SELECT quantity, id FROM access_rights WHERE name = 'user'")
+                    cursor.execute("SELECT id FROM access_rights WHERE name = 'user'")
                     access = cursor.fetchone()
                     new_user = access[0] + 1
                     query = "INSERT INTO users (forename, surname, email, password, access) VALUES (?, ?, ?, ?, ?)"
