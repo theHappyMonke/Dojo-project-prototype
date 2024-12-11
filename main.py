@@ -367,11 +367,9 @@ def signup():
                     cursor = connection.cursor()
                     cursor.execute("SELECT id FROM access_rights WHERE name = 'user'")
                     access = cursor.fetchone()
-                    new_user = access[0] + 1
                     query = "INSERT INTO users (forename, surname, email, password, access) VALUES (?, ?, ?, ?, ?)"
-                    insert_data = (forename, surname, email, generate_password_hash(password), access[1],) #Create a tuple with all the data we want to INSERT.
+                    insert_data = (forename, surname, email, generate_password_hash(password), access[0],) #Create a tuple with all the data we want to INSERT.
                     cursor.execute(query, insert_data) #Combine the query with the data to insert + execute.
-                    cursor.execute("UPDATE access_rights SET quantity = ? WHERE id = ?", (new_user, access[1],))
                     connection.commit() #This is necessary to permanently make the change to our DB, the change will not persist without it.
                 else:
                     flash('Unknown error')
